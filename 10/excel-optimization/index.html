@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#312e81" />
+  <title>Інтерактивний тренажер: Оптимізаційні задачі (10 клас)</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --primary-light: #eef2ff;
+      --secondary: #059669;
+      --secondary-light: #ecfdf5;
+      --accent: #d97706;
+      --accent-light: #fffbeb;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #cbd5e1;
+      --radius: 14px;
+      --shadow: 0 6px 24px -4px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+    }
+
+    .topbar {
+      background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 100%);
+      color: #fff;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+
+    .topbar-inner {
+      max-width: 1020px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.28);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .student-pill {
+      background: rgba(255,255,255,0.14);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .student-pill.visible {
+      display: inline-flex;
+    }
+
+    .container {
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 16px 14px 48px;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .step-item {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .step-item.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.14);
+    }
+
+    .step-item.done {
+      border-color: var(--secondary);
+      background: var(--secondary-light);
+      color: #065f46;
+    }
+
+    .step-num {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+
+    .step-item.active .step-num {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .step-item.done .step-num {
+      background: var(--secondary);
+      color: #fff;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2, h3 {
+      margin-top: 0;
+      line-height: 1.25;
+    }
+
+    h1 { font-size: 22px; color: #1e1b4b; }
+    h2 { font-size: 19px; color: #1e1b4b; }
+    h3 { font-size: 16px; color: #334155; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    @media (min-width: 768px) {
+      .hero-grid {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+      h1 { font-size: 26px; }
+      .brand-title { font-size: 18px; }
+      .step-item { font-size: 13px; padding: 10px 8px; }
+      .card { padding: 26px; }
+    }
+
+    .hero-img-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      background: #eef2ff;
+      box-shadow: 0 4px 16px rgba(79,70,229,0.08);
+    }
+
+    .hero-img-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #1e293b;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      background: #fff;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s, background-color 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      touch-action: manipulation;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.22);
+    }
+
+    .btn-secondary:hover { background: #047857; }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-outline:hover { background: #f1f5f9; }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .btn-row .btn {
+        flex: 1 1 100%;
+      }
+    }
+
+    .problem-box {
+      background: linear-gradient(to right, #eef2ff, #f8fafc);
+      border-left: 4px solid var(--primary);
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      font-size: 15px;
+    }
+
+    .problem-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .problem-table th, .problem-table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .problem-table th {
+      background: #e0e7ff;
+      color: #1e1b4b;
+      font-weight: 700;
+    }
+
+    /* Stage 1: Drag & Drop + Tap-to-Place */
+    .dnd-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px;
+      background: #f1f5f9;
+      border: 1.5px dashed #94a3b8;
+      border-radius: 12px;
+      min-height: 64px;
+      margin-bottom: 16px;
+    }
+
+    .dnd-chip {
+      background: #fff;
+      border: 1.5px solid #6366f1;
+      color: #1e1b4b;
+      padding: 9px 13px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: grab;
+      user-select: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+      transition: all 0.15s;
+      touch-action: manipulation;
+    }
+
+    .dnd-chip:hover {
+      background: #eef2ff;
+    }
+
+    .dnd-chip.selected-chip {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary-dark);
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+    }
+
+    .dnd-slots-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 700px) {
+      .dnd-slots-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .drop-zone {
+      border: 2px dashed #94a3b8;
+      border-radius: 12px;
+      padding: 12px;
+      background: #f8fafc;
+      min-height: 92px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .drop-zone.drag-over, .drop-zone.tap-ready {
+      border-color: var(--primary);
+      background: #eef2ff;
+    }
+
+    .drop-zone.correct-zone {
+      border-color: var(--secondary);
+      background: var(--secondary-light);
+      border-style: solid;
+    }
+
+    .drop-zone.wrong-zone {
+      border-color: var(--danger);
+      background: var(--danger-light);
+      border-style: solid;
+    }
+
+    .drop-zone-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .drop-zone-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 36px;
+    }
+
+    /* Stage 2: Simulation + Canvas */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    @media (min-width: 820px) {
+      .sim-grid {
+        grid-template-columns: 1fr 1.1fr;
+      }
+    }
+
+    .slider-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .slider-val {
+      background: var(--primary);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 32px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .res-bar-wrap {
+      margin-bottom: 10px;
+    }
+
+    .res-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      transition: width 0.2s, background-color 0.2s;
+    }
+
+    .progress-fill.over {
+      background: var(--danger);
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .kpi-box {
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+    }
+
+    .kpi-title {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .kpi-num {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-top: 2px;
+    }
+
+    .canvas-container {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    canvas#odrCanvas {
+      width: 100%;
+      max-width: 440px;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      display: block;
+    }
+
+    /* Stage 3: Spreadsheet + Solver Dialog */
+    .sheet-scroll {
+      overflow-x: auto;
+      margin-bottom: 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .excel-table {
+      width: 100%;
+      min-width: 480px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .excel-table th {
+      background: #e2e8f0;
+      color: #334155;
+      font-weight: 700;
+      padding: 7px 10px;
+      border: 1px solid #cbd5e1;
+      text-align: center;
+    }
+
+    .excel-table td {
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+    }
+
+    .cell-var { background: #fef3c7 !important; font-weight: 700; text-align: center; }
+    .cell-target { background: #d1fae5 !important; font-weight: 800; text-align: center; color: #065f46; }
+    .cell-formula { font-family: monospace; color: #1e40af; text-align: center; }
+
+    .solver-dialog {
+      background: #f1f5f9;
+      border: 2px solid #94a3b8;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .solver-titlebar {
+      background: #334155;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .solver-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 680px) {
+      .solver-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* Alerts & Logs */
+    .feedback {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .feedback.show { display: block; }
+    .feedback.ok { background: var(--secondary-light); color: #065f46; border: 1px solid #6ee7b7; }
+    .feedback.err { background: var(--danger-light); color: #991b1b; border: 1px solid #fca5a5; }
+    .feedback.info { background: var(--primary-light); color: #1e1b4b; border: 1px solid #a5b4fc; }
+
+    .attempt-badge {
+      display: inline-block;
+      background: #e2e8f0;
+      color: #1e293b;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Report Table */
+    .report-table-wrap {
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+
+    .report-table {
+      width: 100%;
+      min-width: 520px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .report-table th, .report-table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    .report-table th {
+      background: #eef2ff;
+      color: #1e1b4b;
+    }
+
+    .score-banner {
+      background: linear-gradient(135deg, #065f46 0%, #059669 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .score-big {
+      font-size: 34px;
+      font-weight: 800;
+      margin: 4px 0;
+    }
+
+    @media print {
+      .topbar, .stepper, .no-print {
+        display: none !important;
+      }
+      body {
+        background: #fff;
+        font-size: 12pt;
+      }
+      .container {
+        max-width: 100%;
+        padding: 0;
+      }
+      .card {
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        padding: 14px;
+      }
+      .screen {
+        display: none !important;
+      }
+      #screen-report {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-badge">Інформатика • 10 клас</span>
+        <span class="brand-title">Оптимізаційні задачі</span>
+      </div>
+      <div class="student-pill" id="headerStudentPill">
+        <span id="headerStudentName">Учень</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="stepper" aria-label="Етапи роботи">
+      <div class="step-item active" id="step-ind-0"><span class="step-num">0</span><br>Реєстрація</div>
+      <div class="step-item" id="step-ind-1"><span class="step-num">1</span><br>Модель (DnD)</div>
+      <div class="step-item" id="step-ind-2"><span class="step-num">2</span><br>Симуляція</div>
+      <div class="step-item" id="step-ind-3"><span class="step-num">3</span><br>Пошук розв'язку</div>
+    </nav>
+
+    <!-- SCREEN 0: REGISTRATION -->
+    <section class="screen active" id="screen-reg">
+      <div class="card">
+        <div class="hero-grid">
+          <div>
+            <h1>Інтерактивний практикум: Розв'язування оптимізаційних задач</h1>
+            <p style="color: var(--muted); margin-bottom: 16px;">
+              Практична робота за програмою та підручником <strong>О. О. Бондаренко</strong> (10 клас). 
+              Ти побудуєш математичну модель, дослідиш область допустимих розв'язків на симуляторі, налаштуєш «Пошук розв'язку» та сформуєш PDF-звіт зі своїми спробами.
+            </p>
+
+            <div class="form-group">
+              <label for="studentName">Прізвище та ім'я учня / учениці *</label>
+              <input type="text" id="studentName" placeholder="Наприклад: Коваленко Олександр" autocomplete="name" />
+            </div>
+
+            <div class="form-group">
+              <label for="studentClass">Обери свій клас *</label>
+              <select id="studentClass">
+                <option value="">— Оберіть клас зі списку —</option>
+                <option value="10-А">10-А</option>
+                <option value="10-Б">10-Б</option>
+                <option value="10-В">10-В</option>
+                <option value="10-Г">10-Г</option>
+                <option value="10-Д">10-Д</option>
+                <option value="10-Ж">10-Ж</option>
+                <option value="10-К">10-К</option>
+              </select>
+            </div>
+
+            <div class="feedback err" id="regError"></div>
+
+            <button class="btn btn-primary btn-block" id="btnStart">
+              Розпочати виконання завдань →
+            </button>
+          </div>
+
+          <!-- Custom crisp 10th-grade teen tech illustration (self-contained SVG for instant GitHub Pages loading) -->
+          <div class="hero-img-wrap" aria-label="Ілюстрація для учнів 10 класу з інформатики">
+            <svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#eef2ff"/>
+                  <stop offset="100%" stop-color="#e0e7ff"/>
+                </linearGradient>
+                <linearGradient id="screenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#1e1b4b"/>
+                  <stop offset="100%" stop-color="#3730a3"/>
+                </linearGradient>
+                <linearGradient id="polyGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#10b981" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#059669" stop-opacity="0.65"/>
+                </linearGradient>
+              </defs>
+              <rect width="640" height="420" fill="url(#bgGrad)"/>
+              <!-- Decorative soft circles -->
+              <circle cx="540" cy="80" r="95" fill="#c7d2fe" opacity="0.45"/>
+              <circle cx="95" cy="350" r="110" fill="#a7f3d0" opacity="0.4"/>
+
+              <!-- Floating Graph Dashboard Card -->
+              <rect x="65" y="42" width="330" height="225" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+              <rect x="65" y="42" width="330" height="32" rx="16" fill="#312e81"/>
+              <circle cx="86" cy="58" r="5" fill="#f87171"/>
+              <circle cx="102" cy="58" r="5" fill="#fbbf24"/>
+              <circle cx="118" cy="58" r="5" fill="#34d399"/>
+              <text x="140" y="63" fill="#e0e7ff" font-family="sans-serif" font-size="12" font-weight="bold">F(x, y) = 600x + 450y → MAX</text>
+
+              <!-- Axes & Feasible Region Polygon -->
+              <line x1="105" y1="232" x2="365" y2="232" stroke="#64748b" stroke-width="2"/>
+              <line x1="105" y1="232" x2="105" y2="92" stroke="#64748b" stroke-width="2"/>
+              <polygon points="105,232 285,232 255,152 105,122" fill="url(#polyGrad)" stroke="#059669" stroke-width="2.5"/>
+              <line x1="105" y1="122" x2="335" y2="232" stroke="#d97706" stroke-width="2" stroke-dasharray="5,4"/>
+              <line x1="225" y1="92" x2="285" y2="232" stroke="#4f46e5" stroke-width="2" stroke-dasharray="5,4"/>
+              <!-- Optimum point star -->
+              <circle cx="255" cy="152" r="8" fill="#059669" stroke="#ffffff" stroke-width="2.5"/>
+              <rect x="268" y="130" width="98" height="26" rx="6" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+              <text x="276" y="147" fill="#065f46" font-family="sans-serif" font-size="11" font-weight="bold">OPT (5; 2) = 3900</text>
+
+              <!-- 10th-Grade Teen Girl (Left) -->
+              <g transform="translate(115, 225)">
+                <rect x="18" y="88" width="76" height="82" rx="18" fill="#4f46e5"/>
+                <circle cx="56" cy="52" r="28" fill="#fde68a"/>
+                <path d="M28,48 Q30,16 58,18 Q86,18 84,52 Q86,74 78,84 L74,54 Q56,38 36,54 L32,84 Q24,72 28,48 Z" fill="#1e1b4b"/>
+                <circle cx="47" cy="52" r="2.5" fill="#1e1b4b"/>
+                <circle cx="65" cy="52" r="2.5" fill="#1e1b4b"/>
+                <path d="M49,63 Q56,69 63,63" fill="none" stroke="#1e1b4b" stroke-width="2" stroke-linecap="round"/>
+                <!-- Tablet -->
+                <rect x="52" y="102" width="68" height="46" rx="6" fill="#1e293b" transform="rotate(-8 52 102)"/>
+                <rect x="56" y="106" width="60" height="38" rx="4" fill="#38bdf8" transform="rotate(-8 52 102)"/>
+              </g>
+
+              <!-- 10th-Grade Teen Boy (Right) -->
+              <g transform="translate(385, 195)">
+                <rect x="24" y="96" width="84" height="98" rx="20" fill="#059669"/>
+                <circle cx="66" cy="56" r="29" fill="#fed7aa"/>
+                <path d="M36,48 Q40,20 68,22 Q94,22 95,48 Q84,36 66,38 Q48,36 36,48 Z" fill="#334155"/>
+                <!-- Glasses -->
+                <rect x="46" y="49" width="16" height="11" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/>
+                <rect x="68" y="49" width="16" height="11" rx="3" fill="none" stroke="#1e293b" stroke-width="2"/>
+                <line x1="62" y1="54" x2="68" y2="54" stroke="#1e293b" stroke-width="2"/>
+                <path d="M59,69 Q66,74 73,69" fill="none" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+                <!-- Laptop -->
+                <polygon points="-25,155 65,155 78,195 -12,195" fill="url(#screenGrad)"/>
+                <rect x="-35" y="193" width="118" height="8" rx="4" fill="#94a3b8"/>
+              </g>
+
+              <!-- Mini Furniture Icons Badge -->
+              <rect x="440" y="54" width="145" height="95" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+              <text x="456" y="77" fill="#334155" font-family="sans-serif" font-size="11" font-weight="bold">Ресурси цеху:</text>
+              <!-- Table icon -->
+              <rect x="458" y="94" width="44" height="6" rx="2" fill="#d97706"/>
+              <rect x="463" y="100" width="4" height="24" fill="#b45309"/>
+              <rect x="493" y="100" width="4" height="24" fill="#b45309"/>
+              <text x="468" y="138" fill="#475569" font-family="sans-serif" font-size="11" font-weight="bold">x</text>
+              <!-- Chair icon -->
+              <rect x="532" y="88" width="4" height="36" fill="#4f46e5"/>
+              <rect x="532" y="104" width="24" height="5" rx="2" fill="#6366f1"/>
+              <rect x="552" y="109" width="4" height="15" fill="#4f46e5"/>
+              <text x="541" y="138" fill="#475569" font-family="sans-serif" font-size="11" font-weight="bold">y</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Умова наскрізної оптимізаційної задачі</h3>
+        <div class="problem-box" style="margin-bottom: 0;">
+          Шкільна майстерня виготовляє <strong>письмові столи (x)</strong> та <strong>стільці (y)</strong>. 
+          За тиждень у наявності є <strong>24 м² деревини</strong> та <strong>18 годин</strong> роботи верстата. 
+          Потрібно скласти план випуску, який забезпечить <strong>максимальний прибуток</strong>.
+          <table class="problem-table">
+            <thead>
+              <tr>
+                <th>Виріб</th>
+                <th>Деревина (м²/шт)</th>
+                <th>Час верстата (год/шт)</th>
+                <th>Прибуток (грн/шт)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Стіл (x)</strong></td>
+                <td>4</td>
+                <td>2</td>
+                <td>600</td>
+              </tr>
+              <tr>
+                <td><strong>Стілець (y)</strong></td>
+                <td>2</td>
+                <td>3</td>
+                <td>450</td>
+              </tr>
+              <tr style="background:#f8fafc; font-weight:700;">
+                <td>Запас ресурсу</td>
+                <td>≤ 24 м²</td>
+                <td>≤ 18 год</td>
+                <td>F(x, y) → max</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 1: DRAG AND DROP MODEL -->
+    <section class="screen" id="screen-1">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+          <h2 style="margin:0;">Етап 1. Побудова математичної моделі</h2>
+          <span class="attempt-badge" id="s1AttemptsBadge">Спроб: 0</span>
+        </div>
+        <p style="color: var(--muted); font-size: 14px;">
+          Перетягни картки з математичними виразами у відповідні блоки моделі. 
+          <strong>На смартфоні:</strong> торкнися картки, щоб виділити її, а потім торкнися потрібного блоку (або натисни на картку в блоці, щоб повернути назад).
+        </p>
+
+        <div class="dnd-bank" id="dndBank" aria-label="Банк математичних виразів"></div>
+
+        <div class="dnd-slots-grid">
+          <div class="drop-zone" data-slot="vars" id="zone-vars">
+            <div class="drop-zone-title"><span>1. Змінні рішення</span><span>(1 елемент)</span></div>
+            <div class="drop-zone-items" id="items-vars"></div>
+          </div>
+
+          <div class="drop-zone" data-slot="obj" id="zone-obj">
+            <div class="drop-zone-title"><span>2. Цільова функція (Прибуток)</span><span>(1 елемент)</span></div>
+            <div class="drop-zone-items" id="items-obj"></div>
+          </div>
+
+          <div class="drop-zone" data-slot="wood" id="zone-wood">
+            <div class="drop-zone-title"><span>3. Обмеження по деревині (≤ 24 м²)</span><span>(1 елемент)</span></div>
+            <div class="drop-zone-items" id="items-wood"></div>
+          </div>
+
+          <div class="drop-zone" data-slot="time" id="zone-time">
+            <div class="drop-zone-title"><span>4. Обмеження по часу (≤ 18 год)</span><span>(1 елемент)</span></div>
+            <div class="drop-zone-items" id="items-time"></div>
+          </div>
+
+          <div class="drop-zone" data-slot="nonneg" id="zone-nonneg" style="grid-column: 1 / -1;">
+            <div class="drop-zone-title"><span>5. Умова невід'ємності та цілочисельності</span><span>(1 елемент)</span></div>
+            <div class="drop-zone-items" id="items-nonneg"></div>
+          </div>
+        </div>
+
+        <div class="feedback" id="s1Feedback"></div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btnCheckS1">Перевірити модель</button>
+          <button class="btn btn-outline" id="btnResetS1">Очистити поля</button>
+          <button class="btn btn-secondary" id="btnNextS1" style="display:none;">Перейти до симуляції →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: INTERACTIVE SIMULATION -->
+    <section class="screen" id="screen-2">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+          <h2 style="margin:0;">Етап 2. Симуляція виробництва та область допустимих розв'язків</h2>
+          <span class="attempt-badge" id="s2AttemptsBadge">Зафіксовано спроб: 0</span>
+        </div>
+        <p style="color: var(--muted); font-size: 14px;">
+          Змінюй кількість столів (x) і стільців (y), спостерігай за витратами ресурсів і положенням точки (x; y) усередині <strong>області допустимих розв'язків (ОДР)</strong>. 
+          Зафіксуй щонайменше 2 допустимі варіанти (спробуй знайти максимальний прибуток!).
+        </p>
+
+        <div class="sim-grid">
+          <div>
+            <div class="slider-card">
+              <div class="slider-header">
+                <span>Кількість столів (x):</span>
+                <span class="slider-val" id="valX">2 шт</span>
+              </div>
+              <input type="range" id="rangeX" min="0" max="8" step="1" value="2" />
+            </div>
+
+            <div class="slider-card">
+              <div class="slider-header">
+                <span>Кількість стільців (y):</span>
+                <span class="slider-val" id="valY">2 шт</span>
+              </div>
+              <input type="range" id="rangeY" min="0" max="8" step="1" value="2" />
+            </div>
+
+            <div class="slider-card">
+              <div class="res-bar-wrap">
+                <div class="res-label">
+                  <span>Деревина (4x + 2y ≤ 24):</span>
+                  <span id="woodUsageText">12 / 24 м²</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="woodBar" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <div class="res-bar-wrap" style="margin-bottom:0;">
+                <div class="res-label">
+                  <span>Час верстата (2x + 3y ≤ 18):</span>
+                  <span id="timeUsageText">10 / 18 год</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="timeBar" style="width: 55.5%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="kpi-row">
+              <div class="kpi-box">
+                <div class="kpi-title">Прибуток F(x, y)</div>
+                <div class="kpi-num" id="profitText">2100 грн</div>
+              </div>
+              <div class="kpi-box">
+                <div class="kpi-title">Статус плану</div>
+                <div class="kpi-num" id="statusText" style="font-size:15px; color:var(--secondary); padding-top:4px;">Допустимий ✓</div>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="btnRecordSim">📌 Зафіксувати спробу в журнал</button>
+              <button class="btn btn-secondary" id="btnNextS2" style="display:none;">Перейти до «Пошуку розв'язку» →</button>
+            </div>
+
+            <div class="feedback" id="s2Feedback"></div>
+          </div>
+
+          <div class="canvas-container">
+            <canvas id="odrCanvas" width="440" height="440"></canvas>
+            <div style="font-size:12px; color:var(--muted); text-align:center; margin-top:6px;">
+              Зелена область — область допустимих розв'язків (ОДР). Точки всередині — цілочисельні плани.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: SOLVER SIMULATION -->
+    <section class="screen" id="screen-3">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+          <h2 style="margin:0;">Етап 3. Налаштування «Пошук розв'язку» (Solver)</h2>
+          <span class="attempt-badge" id="s3AttemptsBadge">Спроб: 0</span>
+        </div>
+        <p style="color: var(--muted); font-size: 14px;">
+          У табличному процесорі (Excel / LibreOffice Calc) модель розміщено на аркуші. 
+          Заповни параметри діалогового вікна <strong>«Пошук розв'язку»</strong> за алгоритмом з підручника О. О. Бондаренко.
+        </p>
+
+        <div class="sheet-scroll">
+          <table class="excel-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>A</th>
+                <th>B</th>
+                <th>C</th>
+                <th>D</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>1</th>
+                <td><strong>Показник</strong></td>
+                <td><strong>Столи (x)</strong></td>
+                <td><strong>Стільці (y)</strong></td>
+                <td><strong>Разом / Ліміт</strong></td>
+              </tr>
+              <tr>
+                <th>2</th>
+                <td>Кількість виробів (шт)</td>
+                <td class="cell-var" id="cellB2">0</td>
+                <td class="cell-var" id="cellC2">0</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <th>3</th>
+                <td>Витрата деревини (м²)</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="cell-formula" id="cellD3">=B2*B3+C2*C3 (0 ≤ 24)</td>
+              </tr>
+              <tr>
+                <th>4</th>
+                <td>Час роботи верстата (год)</td>
+                <td>2</td>
+                <td>3</td>
+                <td class="cell-formula" id="cellD4">=B2*B4+C2*C4 (0 ≤ 18)</td>
+              </tr>
+              <tr>
+                <th>5</th>
+                <td>Прибуток з одиниці (грн)</td>
+                <td>600</td>
+                <td>450</td>
+                <td class="cell-target" id="cellD5">0 грн</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="solver-dialog">
+          <div class="solver-titlebar">Параметри пошуку розв'язку (Solver)</div>
+          <div class="solver-grid">
+            <div class="form-group">
+              <label for="solTargetCell">1. Установити цільову клітинку:</label>
+              <select id="solTargetCell">
+                <option value="">— Оберіть клітинку —</option>
+                <option value="$B$2:$C$2">$B$2:$C$2 (Кількість виробів)</option>
+                <option value="$D$3">$D$3 (Витрата деревини)</option>
+                <option value="$D$5">$D$5 (Загальний прибуток)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="solGoal">2. Напрям оптимізації:</label>
+              <select id="solGoal">
+                <option value="">— Оберіть мету —</option>
+                <option value="max">Максимум (Max)</option>
+                <option value="min">Мінімум (Min)</option>
+                <option value="val">Значенню 0</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="solVarRange">3. Змінюючи клітинки змінних:</label>
+              <select id="solVarRange">
+                <option value="">— Оберіть діапазон —</option>
+                <option value="$B$2:$C$2">$B$2:$C$2</option>
+                <option value="$B$3:$C$4">$B$3:$C$4</option>
+                <option value="$D$3:$D$5">$D$3:$D$5</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="solConstraint">4. Ключові обмеження на ресурси та змінні:</label>
+              <select id="solConstraint">
+                <option value="">— Оберіть систему обмежень —</option>
+                <option value="ok">D3 ≤ 24; D4 ≤ 18; B2:C2 ≥ 0 (цілі)</option>
+                <option value="bad1">D3 ≥ 24; D4 ≥ 18; B2:C2 ≤ 0</option>
+                <option value="bad2">D5 ≤ 24; B2:C2 = 18</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btnRunSolver">▶ Виконати «Знайти розв'язок»</button>
+            <button class="btn btn-secondary" id="btnFinishReport" style="display:none;">📄 Сформувати підсумковий PDF-звіт →</button>
+          </div>
+        </div>
+
+        <div class="feedback" id="s3Feedback"></div>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: FINAL REPORT & PDF EXPORT -->
+    <section class="screen" id="screen-report">
+      <div class="card" id="pdfPrintableArea">
+        <div class="score-banner">
+          <div style="font-size:14px; opacity:0.9;">Практична робота • Інформатика 10 клас (О. О. Бондаренко)</div>
+          <div class="score-big" id="finalScoreText">12 / 12 балів</div>
+          <div id="finalStudentMeta" style="font-size:16px; font-weight:700;">Учень • Клас</div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:16px; font-size:14px; background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0;">
+          <div><strong>Дата виконання:</strong> <span id="repDate">—</span></div>
+          <div><strong>Час початку:</strong> <span id="repStartTime">—</span></div>
+          <div><strong>Час завершення:</strong> <span id="repEndTime">—</span></div>
+          <div><strong>Оптимальний розв'язок:</strong> <span id="repOptimum">x = 5 столів, y = 2 стільці (3900 грн)</span></div>
+        </div>
+
+        <h3>1. Підсумки по етапах</h3>
+        <div class="report-table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Етап</th>
+                <th>Кількість спроб</th>
+                <th>Результат</th>
+                <th>Бали</th>
+              </tr>
+            </thead>
+            <tbody id="repSummaryBody"></tbody>
+          </table>
+        </div>
+
+        <h3>2. Проміжні результати симуляції виробництва</h3>
+        <div class="report-table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Час</th>
+                <th>Столи (x)</th>
+                <th>Стільці (y)</th>
+                <th>Деревина (м²)</th>
+                <th>Час (год)</th>
+                <th>Прибуток (грн)</th>
+                <th>Статус ОДР</th>
+              </tr>
+            </thead>
+            <tbody id="repSimBody"></tbody>
+          </table>
+        </div>
+
+        <h3>3. Повний журнал спроб учня</h3>
+        <div class="report-table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Час</th>
+                <th>Етап</th>
+                <th>Дія / Спроба</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody id="repLogBody"></tbody>
+          </table>
+        </div>
+
+        <div class="btn-row no-print">
+          <button class="btn btn-primary" id="btnDownloadPdf">⬇ Завантажити PDF-звіт на пристрій</button>
+          <button class="btn btn-outline" id="btnPrintPdf">🖨 Друк / Зберегти як PDF (браузер)</button>
+        </div>
+        <div class="feedback info no-print show" style="margin-top:12px;">
+          Порада: кнопка <strong>«Завантажити PDF-звіт на пристрій»</strong> автоматично формує PDF-документ із підтримкою кирилиці та зберігає його у папку «Завантаження».
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const state = {
+      studentName: "",
+      studentClass: "",
+      startTime: null,
+      endTime: null,
+      logs: [],
+      stage1: { attempts: 0, passed: false, score: 0 },
+      stage2: { records: [], foundOptimum: false, score: 0 },
+      stage3: { attempts: 0, passed: false, score: 0 }
+    };
+
+    function nowStr() {
+      const d = new Date();
+      return d.toLocaleTimeString("uk-UA", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    function addLog(stage, detail, ok) {
+      state.logs.push({
+        time: nowStr(),
+        stage,
+        detail,
+        status: ok ? "Успішно" : "Проміжна / Помилка"
+      });
+    }
+
+    function goToStep(stepIdx) {
+      document.querySelectorAll(".screen").forEach((el, idx) => {
+        el.classList.toggle("active", idx === stepIdx);
+      });
+      document.querySelectorAll(".step-item").forEach((el, idx) => {
+        el.classList.remove("active");
+        if (idx < stepIdx) el.classList.add("done");
+        if (idx === stepIdx) el.classList.add("active");
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (stepIdx === 2) drawODRCanvas();
+    }
+
+    // --- SCREEN 0: REGISTRATION ---
+    document.getElementById("btnStart").addEventListener("click", () => {
+      const name = document.getElementById("studentName").value.trim();
+      const cls = document.getElementById("studentClass").value;
+      const errEl = document.getElementById("regError");
+
+      if (name.length < 3) {
+        errEl.textContent = "Будь ласка, введи своє прізвище та ім'я (мінімум 3 символи).";
+        errEl.classList.add("show");
+        return;
+      }
+      if (!cls) {
+        errEl.textContent = "Будь ласка, обери свій клас зі списку (10-А – 10-К).";
+        errEl.classList.add("show");
+        return;
+      }
+
+      errEl.classList.remove("show");
+      state.studentName = name;
+      state.studentClass = cls;
+      state.startTime = new Date();
+
+      const pill = document.getElementById("headerStudentPill");
+      document.getElementById("headerStudentName").textContent = `${name} (${cls})`;
+      pill.classList.add("visible");
+
+      addLog("Реєстрація", `Учень ${name}, клас ${cls} розпочав роботу`, true);
+      initStage1();
+      goToStep(1);
+    });
+
+    // --- SCREEN 1: DRAG & DROP + TAP-TO-PLACE ---
+    const dndItemsData = [
+      { id: "c_vars", text: "x — столи, y — стільці", target: "vars" },
+      { id: "c_obj", text: "F(x, y) = 600x + 450y → max", target: "obj" },
+      { id: "c_wood", text: "4x + 2y ≤ 24", target: "wood" },
+      { id: "c_time", text: "2x + 3y ≤ 18", target: "time" },
+      { id: "c_nonneg", text: "x ≥ 0, y ≥ 0; x, y ∈ Z", target: "nonneg" },
+      { id: "c_dist1", text: "F(x, y) = 24x + 18y → min", target: "none" },
+      { id: "c_dist2", text: "600x + 450y ≤ 24", target: "none" }
+    ];
+
+    let selectedChipId = null;
+
+    function initStage1() {
+      const bank = document.getElementById("dndBank");
+      bank.innerHTML = "";
+      document.querySelectorAll(".drop-zone-items").forEach(z => z.innerHTML = "");
+      document.querySelectorAll(".drop-zone").forEach(z => z.classList.remove("correct-zone", "wrong-zone", "tap-ready"));
+      selectedChipId = null;
+
+      const shuffled = [...dndItemsData].sort(() => Math.random() - 0.5);
+      shuffled.forEach(item => {
+        const chip = document.createElement("div");
+        chip.className = "dnd-chip";
+        chip.id = item.id;
+        chip.textContent = item.text;
+        chip.draggable = true;
+        chip.dataset.target = item.target;
+
+        chip.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", item.id);
+          selectedChipId = item.id;
+        });
+
+        chip.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (chip.parentElement.id !== "dndBank") {
+            bank.appendChild(chip);
+            clearChipSelection();
+            return;
+          }
+          if (selectedChipId === item.id) {
+            clearChipSelection();
+          } else {
+            clearChipSelection();
+            selectedChipId = item.id;
+            chip.classList.add("selected-chip");
+            document.querySelectorAll(".drop-zone").forEach(z => z.classList.add("tap-ready"));
+          }
+        });
+
+        bank.appendChild(chip);
+      });
+    }
+
+    function clearChipSelection() {
+      selectedChipId = null;
+      document.querySelectorAll(".dnd-chip").forEach(c => c.classList.remove("selected-chip"));
+      document.querySelectorAll(".drop-zone").forEach(z => z.classList.remove("tap-ready"));
+    }
+
+    function placeChipInZone(chipId, zoneEl) {
+      const chip = document.getElementById(chipId);
+      if (!chip) return;
+      const itemsContainer = zoneEl.querySelector(".drop-zone-items");
+      const bank = document.getElementById("dndBank");
+      while (itemsContainer.firstChild) {
+        bank.appendChild(itemsContainer.firstChild);
+      }
+      itemsContainer.appendChild(chip);
+      zoneEl.classList.remove("correct-zone", "wrong-zone");
+      clearChipSelection();
+    }
+
+    document.querySelectorAll(".drop-zone").forEach(zone => {
+      zone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        zone.classList.add("drag-over");
+      });
+      zone.addEventListener("dragleave", () => {
+        zone.classList.remove("drag-over");
+      });
+      zone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        zone.classList.remove("drag-over");
+        const chipId = e.dataTransfer.getData("text/plain") || selectedChipId;
+        if (chipId) placeChipInZone(chipId, zone);
+      });
+      zone.addEventListener("click", () => {
+        if (selectedChipId) {
+          placeChipInZone(selectedChipId, zone);
+        }
+      });
+    });
+
+    document.getElementById("btnResetS1").addEventListener("click", () => {
+      initStage1();
+      document.getElementById("s1Feedback").classList.remove("show");
+    });
+
+    document.getElementById("btnCheckS1").addEventListener("click", () => {
+      state.stage1.attempts++;
+      document.getElementById("s1AttemptsBadge").textContent = `Спроб: ${state.stage1.attempts}`;
+
+      const slots = ["vars", "obj", "wood", "time", "nonneg"];
+      let correctCount = 0;
+
+      slots.forEach(slot => {
+        const zone = document.getElementById(`zone-${slot}`);
+        const chip = zone.querySelector(".dnd-chip");
+        zone.classList.remove("correct-zone", "wrong-zone");
+        if (chip && chip.dataset.target === slot) {
+          zone.classList.add("correct-zone");
+          correctCount++;
+        } else {
+          zone.classList.add("wrong-zone");
+        }
+      });
+
+      const fb = document.getElementById("s1Feedback");
+      if (correctCount === 5) {
+        state.stage1.passed = true;
+        state.stage1.score = state.stage1.attempts === 1 ? 4 : (state.stage1.attempts === 2 ? 3.5 : 3);
+        addLog("Етап 1 (Модель DnD)", `Спроба №${state.stage1.attempts}: усі 5 блоків моделі зібрано правильно`, true);
+        fb.className = "feedback ok show";
+        fb.textContent = `Чудово! Математична модель побудована повністю правильно (Спроба №${state.stage1.attempts}). Натисни «Перейти до симуляції».`;
+        document.getElementById("btnNextS1").style.display = "inline-flex";
+      } else {
+        addLog("Етап 1 (Модель DnD)", `Спроба №${state.stage1.attempts}: правильно ${correctCount} з 5 блоків`, false);
+        fb.className = "feedback err show";
+        fb.textContent = `Правильно заповнено ${correctCount} з 5 блоків (червоні рамки потребують виправлення). Спробуй ще раз!`;
+      }
+    });
+
+    document.getElementById("btnNextS1").addEventListener("click", () => goToStep(2));
+
+    // --- SCREEN 2: INTERACTIVE SIMULATION & ODR CANVAS ---
+    const rangeX = document.getElementById("rangeX");
+    const rangeY = document.getElementById("rangeY");
+
+    function getSimMetrics() {
+      const x = parseInt(rangeX.value, 10);
+      const y = parseInt(rangeY.value, 10);
+      const wood = 4 * x + 2 * y;
+      const time = 2 * x + 3 * y;
+      const profit = 600 * x + 450 * y;
+      const valid = wood <= 24 && time <= 18;
+      return { x, y, wood, time, profit, valid };
+    }
+
+    function updateSimUI() {
+      const m = getSimMetrics();
+      document.getElementById("valX").textContent = `${m.x} шт`;
+      document.getElementById("valY").textContent = `${m.y} шт`;
+
+      document.getElementById("woodUsageText").textContent = `${m.wood} / 24 м²`;
+      const woodPct = Math.min(100, (m.wood / 24) * 100);
+      const woodBar = document.getElementById("woodBar");
+      woodBar.style.width = `${woodPct}%`;
+      woodBar.classList.toggle("over", m.wood > 24);
+
+      document.getElementById("timeUsageText").textContent = `${m.time} / 18 год`;
+      const timePct = Math.min(100, (m.time / 18) * 100);
+      const timeBar = document.getElementById("timeBar");
+      timeBar.style.width = `${timePct}%`;
+      timeBar.classList.toggle("over", m.time > 18);
+
+      document.getElementById("profitText").textContent = `${m.profit} грн`;
+      const stEl = document.getElementById("statusText");
+      if (m.valid) {
+        stEl.textContent = (m.x === 5 && m.y === 2) ? "ОПТИМУМ! ★" : "Допустимий ✓";
+        stEl.style.color = "var(--secondary)";
+      } else {
+        stEl.textContent = "Перевищення ліміту! ✕";
+        stEl.style.color = "var(--danger)";
+      }
+
+      drawODRCanvas();
+    }
+
+    function drawODRCanvas() {
+      const canvas = document.getElementById("odrCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width;
+      const H = canvas.height;
+      const pad = 46;
+      const maxAxis = 9;
+      const plotW = W - pad * 1.6;
+      const plotH = H - pad * 1.6;
+
+      const toX = (x) => pad + (x / maxAxis) * plotW;
+      const toY = (y) => H - pad - (y / maxAxis) * plotH;
+
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.strokeStyle = "#e2e8f0";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= maxAxis; i++) {
+        ctx.beginPath();
+        ctx.moveTo(toX(i), toY(0));
+        ctx.lineTo(toX(i), toY(maxAxis));
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(toX(0), toY(i));
+        ctx.lineTo(toX(maxAxis), toY(i));
+        ctx.stroke();
+      }
+
+      // Feasible region polygon (ODR): (0,0) -> (6,0) -> (4.5, 3) -> (0, 6)
+      ctx.fillStyle = "rgba(16, 185, 129, 0.22)";
+      ctx.beginPath();
+      ctx.moveTo(toX(0), toY(0));
+      ctx.lineTo(toX(6), toY(0));
+      ctx.lineTo(toX(4.5), toY(3));
+      ctx.lineTo(toX(0), toY(6));
+      ctx.closePath();
+      ctx.fill();
+
+      // Constraint 1: 4x + 2y = 24
+      ctx.strokeStyle = "#4f46e5";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(toX(6), toY(0));
+      ctx.lineTo(toX(1.5), toY(9));
+      ctx.stroke();
+
+      // Constraint 2: 2x + 3y = 18
+      ctx.strokeStyle = "#d97706";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(toX(9), toY(0));
+      ctx.lineTo(toX(0), toY(6));
+      ctx.stroke();
+
+      // Axes
+      ctx.strokeStyle = "#1e293b";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(toX(0), toY(0));
+      ctx.lineTo(toX(maxAxis), toY(0));
+      ctx.moveTo(toX(0), toY(0));
+      ctx.lineTo(toX(0), toY(maxAxis));
+      ctx.stroke();
+
+      // Axis labels
+      ctx.fillStyle = "#334155";
+      ctx.font = "12px sans-serif";
+      ctx.textAlign = "center";
+      for (let i = 0; i <= maxAxis; i++) {
+        ctx.fillText(i, toX(i), toY(0) + 18);
+        if (i > 0) ctx.fillText(i, toX(0) - 16, toY(i) + 4);
+      }
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText("Столи (x)", toX(maxAxis) - 10, toY(0) + 34);
+      ctx.fillText("Стільці (y)", toX(0) + 16, toY(maxAxis) - 12);
+
+      // Integer feasible lattice points
+      for (let ix = 0; ix <= 6; ix++) {
+        for (let iy = 0; iy <= 6; iy++) {
+          if (4 * ix + 2 * iy <= 24 && 2 * ix + 3 * iy <= 18) {
+            ctx.fillStyle = (ix === 5 && iy === 2) ? "#059669" : "#64748b";
+            ctx.beginPath();
+            ctx.arc(toX(ix), toY(iy), (ix === 5 && iy === 2) ? 5 : 3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      // Recorded user points
+      state.stage2.records.forEach(r => {
+        ctx.strokeStyle = r.valid ? "#059669" : "#dc2626";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(toX(r.x), toY(r.y), 7, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+
+      // Current slider point
+      const m = getSimMetrics();
+      ctx.fillStyle = m.valid ? "#059669" : "#dc2626";
+      ctx.beginPath();
+      ctx.arc(toX(m.x), toY(m.y), 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText(`(${m.x}; ${m.y}) = ${m.profit} грн`, Math.min(W - 65, toX(m.x) + 10), Math.max(22, toY(m.y) - 14));
+    }
+
+    rangeX.addEventListener("input", updateSimUI);
+    rangeY.addEventListener("input", updateSimUI);
+
+    document.getElementById("btnRecordSim").addEventListener("click", () => {
+      const m = getSimMetrics();
+      const rec = {
+        num: state.stage2.records.length + 1,
+        time: nowStr(),
+        ...m
+      };
+      state.stage2.records.push(rec);
+      if (m.valid && m.x === 5 && m.y === 2) {
+        state.stage2.foundOptimum = true;
+      }
+
+      document.getElementById("s2AttemptsBadge").textContent = `Зафіксовано спроб: ${state.stage2.records.length}`;
+      addLog(
+        "Етап 2 (Симуляція)",
+        `План (x=${m.x}, y=${m.y}): деревина=${m.wood}м², час=${m.time}год, прибуток=${m.profit}грн`,
+        m.valid
+      );
+
+      const fb = document.getElementById("s2Feedback");
+      const validCount = state.stage2.records.filter(r => r.valid).length;
+
+      if (!m.valid) {
+        fb.className = "feedback err show";
+        fb.textContent = `Спробу (${m.x}; ${m.y}) зафіксовано як недопустиму (перевищено ліміт ресурсів). Зменш кількість виробів, щоб потрапити в зелену зону!`;
+      } else if (m.x === 5 && m.y === 2) {
+        fb.className = "feedback ok show";
+        fb.textContent = `Бінго! Ти знайшов цілочисельний оптимум (5 столів, 2 стільці) з максимальним прибутком 3900 грн!`;
+      } else {
+        fb.className = "feedback info show";
+        fb.textContent = `Проміжний план (${m.x}; ${m.y}) з прибутком ${m.profit} грн зафіксовано. Спробуй збільшити прибуток, наближаючись до верхньої правої межі зеленої області.`;
+      }
+
+      if (validCount >= 2) {
+        state.stage2.score = state.stage2.foundOptimum ? 4 : 3.5;
+        document.getElementById("btnNextS2").style.display = "inline-flex";
+      }
+      drawODRCanvas();
+    });
+
+    document.getElementById("btnNextS2").addEventListener("click", () => goToStep(3));
+
+    // --- SCREEN 3: SOLVER SIMULATION ---
+    document.getElementById("btnRunSolver").addEventListener("click", () => {
+      state.stage3.attempts++;
+      document.getElementById("s3AttemptsBadge").textContent = `Спроб: ${state.stage3.attempts}`;
+
+      const tCell = document.getElementById("solTargetCell").value;
+      const goal = document.getElementById("solGoal").value;
+      const vRange = document.getElementById("solVarRange").value;
+      const constr = document.getElementById("solConstraint").value;
+      const fb = document.getElementById("s3Feedback");
+
+      if (!tCell || !goal || !vRange || !constr) {
+        fb.className = "feedback err show";
+        fb.textContent = "Заповни всі 4 параметри вікна «Пошук розв'язку» перед запуском.";
+        return;
+      }
+
+      const isOk = (tCell === "$D$5" && goal === "max" && vRange === "$B$2:$C$2" && constr === "ok");
+
+      if (isOk) {
+        state.stage3.passed = true;
+        state.stage3.score = state.stage3.attempts === 1 ? 4 : (state.stage3.attempts === 2 ? 3.5 : 3);
+
+        document.getElementById("cellB2").textContent = "5";
+        document.getElementById("cellC2").textContent = "2";
+        document.getElementById("cellD3").textContent = "24 (≤ 24 ✓)";
+        document.getElementById("cellD4").textContent = "16 (≤ 18 ✓)";
+        document.getElementById("cellD5").textContent = "3900 грн (MAX)";
+
+        addLog("Етап 3 (Solver)", `Спроба №${state.stage3.attempts}: знайдено оптимальний розв'язок x=5, y=2, F=3900 грн`, true);
+        fb.className = "feedback ok show";
+        fb.textContent = "Пошук розв'язку успішно знайшов оптимальний цілочисельний план: 5 столів і 2 стільці (максимальний прибуток 3900 грн)!";
+        document.getElementById("btnFinishReport").style.display = "inline-flex";
+      } else {
+        addLog("Етап 3 (Solver)", `Спроба №${state.stage3.attempts}: неправильні параметри Solver (${tCell}, ${goal}, ${vRange})`, false);
+        fb.className = "feedback err show";
+        fb.textContent = "Пошук розв'язку не зійшовся: перевір адресу цільової клітинки прибутку ($D$5), напрям (Максимум), клітинки змінних ($B$2:$C$2) та знак обмежень (≤).";
+      }
+    });
+
+    // --- SCREEN 4: REPORT & PDF EXPORT ---
+    document.getElementById("btnFinishReport").addEventListener("click", () => {
+      state.endTime = new Date();
+      addLog("Завершення", "Сформовано підсумковий звіт практичної роботи", true);
+
+      const totalScore = Math.round((state.stage1.score + state.stage2.score + state.stage3.score) * 10) / 10;
+      document.getElementById("finalScoreText").textContent = `${totalScore} / 12 балів`;
+      document.getElementById("finalStudentMeta").textContent = `${state.studentName} • Клас ${state.studentClass}`;
+
+      document.getElementById("repDate").textContent = state.startTime.toLocaleDateString("uk-UA");
+      document.getElementById("repStartTime").textContent = state.startTime.toLocaleTimeString("uk-UA");
+      document.getElementById("repEndTime").textContent = state.endTime.toLocaleTimeString("uk-UA");
+
+      // Summary table
+      const sumBody = document.getElementById("repSummaryBody");
+      sumBody.innerHTML = `
+        <tr>
+          <td>1. Побудова математичної моделі (Drag-and-Drop)</td>
+          <td>${state.stage1.attempts}</td>
+          <td>${state.stage1.passed ? "Виконано" : "Не завершено"}</td>
+          <td><strong>${state.stage1.score} / 4</strong></td>
+        </tr>
+        <tr>
+          <td>2. Симуляція виробництва та дослідження ОДР</td>
+          <td>${state.stage2.records.length}</td>
+          <td>${state.stage2.foundOptimum ? "Знайдено оптимум (5; 2)" : "Досліджено допустимі плани"}</td>
+          <td><strong>${state.stage2.score} / 4</strong></td>
+        </tr>
+        <tr>
+          <td>3. Налаштування «Пошук розв'язку» (Solver)</td>
+          <td>${state.stage3.attempts}</td>
+          <td>${state.stage3.passed ? "Оптимум знайдено (3900 грн)" : "Не завершено"}</td>
+          <td><strong>${state.stage3.score} / 4</strong></td>
+        </tr>
+      `;
+
+      // Simulation records
+      const simBody = document.getElementById("repSimBody");
+      simBody.innerHTML = state.stage2.records.map(r => `
+        <tr>
+          <td>${r.num}</td>
+          <td>${r.time}</td>
+          <td>${r.x}</td>
+          <td>${r.y}</td>
+          <td>${r.wood} / 24</td>
+          <td>${r.time} / 18</td>
+          <td><strong>${r.profit} грн</strong></td>
+          <td style="color:${r.valid ? '#065f46' : '#991b1b'}; font-weight:600;">${r.valid ? 'В межах ОДР ✓' : 'Перевищення ✕'}</td>
+        </tr>
+      `).join("");
+
+      // Full attempt log
+      const logBody = document.getElementById("repLogBody");
+      logBody.innerHTML = state.logs.map(l => `
+        <tr>
+          <td>${l.time}</td>
+          <td>${l.stage}</td>
+          <td>${l.detail}</td>
+          <td>${l.status}</td>
+        </tr>
+      `).join("");
+
+      goToStep(4);
+    });
+
+    document.getElementById("btnPrintPdf").addEventListener("click", () => {
+      window.print();
+    });
+
+    document.getElementById("btnDownloadPdf").addEventListener("click", async () => {
+      const btn = document.getElementById("btnDownloadPdf");
+      const origText = btn.textContent;
+      btn.textContent = "⏳ Формування PDF-файлу...";
+      btn.disabled = true;
+
+      try {
+        const element = document.getElementById("pdfPrintableArea");
+        const noPrints = element.querySelectorAll(".no-print");
+        noPrints.forEach(el => el.style.display = "none");
+
+        const canvas = await html2canvas(element, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff"
+        });
+
+        noPrints.forEach(el => el.style.display = "");
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.95);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgProps = pdf.getImageProperties(imgData);
+        const ratio = Math.min((pdfWidth - 16) / imgProps.width, (pdfHeight - 16) / imgProps.height);
+        const w = imgProps.width * ratio;
+        const h = imgProps.height * ratio;
+
+        pdf.addImage(imgData, "JPEG", 8, 8, w, h);
+        const safeName = state.studentName.replace(/[^a-zA-Zа-яА-ЯіІїЇєЄґҐ0-9_-]/g, "_");
+        pdf.save(`Optymizatsiya_${state.studentClass}_${safeName}.pdf`);
+      } catch (err) {
+        console.error(err);
+        window.print();
+      } finally {
+        btn.textContent = origText;
+        btn.disabled = false;
+      }
+    });
+
+    // Initialize simulation UI
+    updateSimUI();
+  </script>
+</body>
+</html>
