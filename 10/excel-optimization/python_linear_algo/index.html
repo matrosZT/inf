@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Інформатика 10 клас — Лінійні алгоритми в Python</title>
+  <!-- Підключення сучасного шрифту та бібліотеки для генерації PDF -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-main: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-card-hover: #19243e;
+      --bg-input: #090d16;
+      --border: #253352;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.25);
+      --secondary: #a855f7;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Верхня панель */
+    header.topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 15, 25, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+    }
+
+    .topbar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0ea5e9, #9333ea);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.1rem;
+      box-shadow: 0 0 16px var(--primary-glow);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .brand-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .student-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .student-bar input {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      outline: none;
+      width: 190px;
+      transition: border-color 0.2s;
+    }
+
+    .student-bar input:focus {
+      border-color: var(--primary);
+    }
+
+    .score-pill {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    /* Контейнер */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+    }
+
+    /* Hero банер */
+    .hero {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 55%, #0c4a6e 100%);
+      padding: 32px 28px;
+      margin-bottom: 28px;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.6rem, 3.2vw, 2.35rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      background: linear-gradient(to right, #ffffff, #7dd3fc, #d8b4fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #cbd5e1;
+      font-size: 0.96rem;
+      margin-bottom: 18px;
+    }
+
+    .hero-visual {
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #090d16;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Прогрес бар */
+    .progress-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 28px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+    }
+
+    .progress-track {
+      height: 10px;
+      background: var(--bg-input);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 0.4s ease;
+    }
+
+    /* Картки завдань */
+    .task-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      transition: border-color 0.25s;
+    }
+
+    .task-card.completed {
+      border-color: rgba(16, 185, 129, 0.55);
+    }
+
+    .task-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .task-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .task-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-pts {
+      background: rgba(168, 85, 247, 0.16);
+      color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* Кнопки */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, #d97706, #ea580c);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: var(--primary);
+    }
+
+    .btn-info {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #7dd3fc;
+      padding: 7px 14px;
+      font-size: 0.84rem;
+    }
+
+    .btn-info:hover {
+      background: rgba(56, 189, 248, 0.22);
+    }
+
+    /* Панель "Дізнайся більше" */
+    .learn-more-box {
+      display: none;
+      background: rgba(14, 165, 233, 0.08);
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 18px;
+      font-size: 0.92rem;
+      color: #e2e8f0;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .learn-more-box.open {
+      display: block;
+    }
+
+    .learn-more-box h4 {
+      color: var(--primary);
+      margin-bottom: 6px;
+      font-size: 0.98rem;
+    }
+
+    .learn-more-box ul {
+      margin-left: 20px;
+      margin-top: 6px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Зворотний зв'язок */
+    .feedback {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      display: none;
+    }
+
+    .feedback.ok {
+      display: block;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+    }
+
+    .feedback.err {
+      display: block;
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+
+    /* ================= СИМУЛЯЦІЯ 1: КОНВЕЄР ЛІНІЙНОГО АЛГОРИТМУ ================= */
+    .sim1-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .sim-controls {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .form-group select, .form-group input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+    }
+
+    .flowchart-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .fc-block {
+      width: 100%;
+      max-width: 340px;
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 0.9rem;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .fc-oval { border-radius: 999px; }
+    .fc-para { transform: skewX(-12deg); border-radius: 6px; }
+    .fc-para > span { display: inline-block; transform: skewX(12deg); }
+    .fc-rect { border-radius: 8px; }
+
+    .fc-block.active {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.16);
+      color: #fff;
+      box-shadow: 0 0 20px var(--primary-glow);
+      transform: scale(1.03);
+    }
+    .fc-para.active {
+      transform: skewX(-12deg) scale(1.03);
+    }
+
+    .fc-arrow {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .ram-boxes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .ram-cell {
+      flex: 1;
+      min-width: 95px;
+      background: #0f172a;
+      border: 1px dashed var(--primary);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .ram-cell .var-name {
+      font-size: 0.78rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .ram-cell .var-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 3px;
+    }
+
+    /* ================= СИМУЛЯЦІЯ 2: ОБМІН ЗМІННИХ ЧЕРЕЗ TMP ================= */
+    .swap-arena {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .var-box {
+      background: var(--bg-input);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 12px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .var-box.highlight {
+      border-color: var(--accent);
+      box-shadow: 0 0 22px rgba(245, 158, 11, 0.25);
+    }
+
+    .var-box-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .var-box-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .swap-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .code-trace {
+      background: #060911;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: #a5f3fc;
+      min-height: 54px;
+    }
+
+    /* ================= DRAG & DROP (ПІДТРИМКА ТАЧСКРІНІВ І МИШІ) ================= */
+    .dnd-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .dnd-pool, .dnd-target {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      min-height: 220px;
+    }
+
+    .dnd-col-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .drag-item {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: grab;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      user-select: none;
+      transition: transform 0.15s, border-color 0.2s, background 0.2s;
+    }
+
+    .drag-item:hover {
+      border-color: var(--primary);
+      background: #243249;
+    }
+
+    .drag-item.selected-touch {
+      border-color: var(--accent);
+      background: rgba(245, 158, 11, 0.18);
+    }
+
+    .drop-slot {
+      border: 2px dashed #334155;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .drop-slot.drag-over {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .drop-slot.filled {
+      border-style: solid;
+      border-color: #475569;
+      background: #172033;
+      color: #fff;
+    }
+
+    /* ================= ЗАВДАННЯ З ЕЛЕМЕНТАМИ КОДУ ================= */
+    .code-editor-box {
+      background: #060911;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+
+    .code-blank {
+      background: #1e293b;
+      border: 1px solid var(--primary);
+      color: #38bdf8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      width: 145px;
+      outline: none;
+    }
+
+    .code-blank:focus {
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .quiz-option {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--primary);
+    }
+
+    .quiz-option.chosen {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.14);
+    }
+
+    /* ================= ЗВІТ ТА PDF ================= */
+    .report-card {
+      background: linear-gradient(145deg, #131b2e, #182238);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 22px;
+      padding: 26px;
+      margin-top: 32px;
+    }
+
+    .pdf-preview-sheet {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 14px;
+      padding: 26px;
+      margin-top: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    }
+
+    .pdf-preview-sheet h2 {
+      color: #0f172a;
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      font-size: 1.35rem;
+    }
+
+    .pdf-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 0.88rem;
+    }
+
+    .pdf-table th, .pdf-table td {
+      border: 1px solid #cbd5e1;
+      padding: 9px 11px;
+      text-align: left;
+    }
+
+    .pdf-table th {
+      background: #f1f5f9;
+      font-weight: 700;
+    }
+
+    .log-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.82rem;
+      max-height: 220px;
+      overflow-y: auto;
+      color: #334155;
+    }
+
+    /* Адаптація для смартфонів */
+    @media (max-width: 820px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 22px 18px;
+      }
+      .sim1-grid, .dnd-layout {
+        grid-template-columns: 1fr;
+      }
+      .swap-arena {
+        grid-template-columns: 1fr;
+      }
+      .student-bar input {
+        width: 150px;
+      }
+    }
+
+    /* Стилі для друку, якщо html2pdf або системний друк */
+    @media print {
+      body { background: #fff; color: #000; }
+      header.topbar, .hero, .progress-wrap, .task-card, .no-print { display: none !important; }
+      .report-card { border: none; padding: 0; margin: 0; background: #fff; }
+      .pdf-preview-sheet { box-shadow: none; padding: 0; }
+      .log-box { max-height: none; overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Верхня панель учня -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-logo">Py</div>
+        <div>
+          <div class="brand-title">Інформатика • 10 клас</div>
+          <div class="brand-sub">Лінійні алгоритми в Python (Урок 10)</div>
+        </div>
+      </div>
+
+      <div class="student-bar">
+        <input type="text" id="studentName" placeholder="Прізвище та ім'я учня" oninput="updateReportPreview()" />
+        <input type="text" id="studentClass" placeholder="Клас (напр. 10-Д)" value="10-Д" oninput="updateReportPreview()" />
+        <div class="score-pill" id="totalScorePill">Бали: 0 / 12</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero секція з векторною ілюстрацією для 10 класу -->
+    <section class="hero">
+      <div>
+        <span class="hero-badge">Інтерактивний тренажер • Python 3</span>
+        <h1>Лінійні алгоритми: від блок-схеми до коду</h1>
+        <p>
+          Досліджуй, як працюють програми без розгалужень і циклів: моделюй обчислення, 
+          виконуй обмін значень змінних через третю змінну <code>tmp</code>, складай алгоритми методом Drag &amp; Drop та пиши фрагменти коду.
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          <a href="#sim1" class="btn btn-primary" style="text-decoration:none;">Почати практику</a>
+          <a href="#pdfReportSection" class="btn btn-outline" style="text-decoration:none;">Переглянути звіт (PDF)</a>
+        </div>
+      </div>
+
+      <!-- Сучасна SVG-графіка для учнів 10 класу -->
+      <div class="hero-visual">
+        <svg viewBox="0 0 540 310" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#090d16"/>
+              <stop offset="100%" stop-color="#172038"/>
+            </linearGradient>
+            <linearGradient id="cyanGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="#818cf8"/>
+            </linearGradient>
+            <linearGradient id="amberGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#f59e0b"/>
+              <stop offset="100%" stop-color="#ec4899"/>
+            </linearGradient>
+          </defs>
+          <rect width="540" height="310" fill="url(#bgGrad)"/>
+          <!-- Сітка фону -->
+          <g stroke="#1e293b" stroke-width="1">
+            <line x1="0" y1="50" x2="540" y2="50"/><line x1="0" y1="100" x2="540" y2="100"/>
+            <line x1="0" y1="150" x2="540" y2="150"/><line x1="0" y1="200" x2="540" y2="200"/>
+            <line x1="0" y1="250" x2="540" y2="250"/>
+            <line x1="90" y1="0" x2="90" y2="310"/><line x1="180" y1="0" x2="180" y2="310"/>
+            <line x1="270" y1="0" x2="270" y2="310"/><line x1="360" y1="0" x2="360" y2="310"/>
+            <line x1="450" y1="0" x2="450" y2="310"/>
+          </g>
+
+          <!-- Вікно редактора коду зліва -->
+          <rect x="24" y="28" width="255" height="254" rx="14" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+          <circle cx="44" cy="46" r="5" fill="#ef4444"/>
+          <circle cx="60" cy="46" r="5" fill="#f59e0b"/>
+          <circle cx="76" cy="46" r="5" fill="#10b981"/>
+          <text x="96" y="50" fill="#64748b" font-family="JetBrains Mono, monospace" font-size="11">10_1_1.py</text>
+
+          <text x="40" y="84" fill="#38bdf8" font-family="JetBrains Mono, monospace" font-size="12"># 1. Введення</text>
+          <text x="40" y="106" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="12">c = <tspan fill="#c084fc">int</tspan>(<tspan fill="#34d399">input</tspan>())</text>
+
+          <text x="40" y="142" fill="#38bdf8" font-family="JetBrains Mono, monospace" font-size="12"># 2. Обчислення</text>
+          <text x="40" y="164" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="12">f = c * <tspan fill="#f59e0b">9</tspan> / <tspan fill="#f59e0b">5</tspan> + <tspan fill="#f59e0b">32</tspan></text>
+
+          <text x="40" y="200" fill="#38bdf8" font-family="JetBrains Mono, monospace" font-size="12"># 3. Виведення</text>
+          <text x="40" y="222" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="12"><tspan fill="#34d399">print</tspan>(<tspan fill="#fcd34d">"°F:"</tspan>, f)</text>
+
+          <rect x="40" y="242" width="220" height="26" rx="6" fill="#1e293b"/>
+          <text x="50" y="259" fill="#34d399" font-family="JetBrains Mono, monospace" font-size="11">&gt;&gt;&gt; 25  →  °F: 77.0</text>
+
+          <!-- Блок-схема справа -->
+          <rect x="335" y="26" width="160" height="34" rx="17" fill="#1e1b4b" stroke="url(#cyanGrad)" stroke-width="2"/>
+          <text x="415" y="47" text-anchor="middle" fill="#fff" font-family="Inter, sans-serif" font-size="12" font-weight="600">Початок</text>
+          <line x1="415" y1="60" x2="415" y2="82" stroke="#38bdf8" stroke-width="2"/>
+
+          <polygon points="348,82 496,82 482,118 334,118" fill="#0c4a6e" stroke="#38bdf8" stroke-width="2"/>
+          <text x="415" y="104" text-anchor="middle" fill="#fff" font-family="Inter, sans-serif" font-size="12" font-weight="600">Введення c</text>
+          <line x1="415" y1="118" x2="415" y2="140" stroke="#38bdf8" stroke-width="2"/>
+
+          <rect x="335" y="140" width="160" height="40" rx="8" fill="#311042" stroke="url(#amberGrad)" stroke-width="2"/>
+          <text x="415" y="164" text-anchor="middle" fill="#fff" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600">f = c*9/5 + 32</text>
+          <line x1="415" y1="180" x2="415" y2="202" stroke="#38bdf8" stroke-width="2"/>
+
+          <polygon points="348,202 496,202 482,238 334,238" fill="#0c4a6e" stroke="#38bdf8" stroke-width="2"/>
+          <text x="415" y="224" text-anchor="middle" fill="#fff" font-family="Inter, sans-serif" font-size="12" font-weight="600">Виведення f</text>
+          <line x1="415" y1="238" x2="415" y2="256" stroke="#38bdf8" stroke-width="2"/>
+
+          <rect x="335" y="256" width="160" height="34" rx="17" fill="#1e1b4b" stroke="url(#cyanGrad)" stroke-width="2"/>
+          <text x="415" y="277" text-anchor="middle" fill="#fff" font-family="Inter, sans-serif" font-size="12" font-weight="600">Кінець</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Прогрес виконання -->
+    <div class="progress-wrap">
+      <div class="progress-header">
+        <span>Загальний прогрес виконання інтерактивів</span>
+        <span id="progressText">0% виконано (0 з 5 завдань)</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBar"></div>
+      </div>
+    </div>
+
+    <!-- ==================== ЗАВДАННЯ 1: СИМУЛЯЦІЯ 1 ==================== -->
+    <article class="task-card" id="sim1">
+      <div class="task-top">
+        <div>
+          <div class="task-tag">Симуляція №1 • Конвеєр програми</div>
+          <h2 class="task-title">1. Три етапи лінійного алгоритму та пам'ять ПК</h2>
+        </div>
+        <div class="task-meta">
+          <button class="btn btn-info" onclick="toggleInfo('info1')">💡 Дізнайся більше</button>
+          <span class="badge-pts" id="badge-t1">0 / 2 бали</span>
+        </div>
+      </div>
+
+      <div class="learn-more-box" id="info1">
+        <h4>Теоретична довідка: будова лінійної програми та блок-схема</h4>
+        <p><strong>Лінійний алгоритм</strong> — це алгоритм, у якому всі команди виконуються послідовно одна за одною, зверху вниз, без розгалужень і повторень.</p>
+        <ul>
+          <li><strong>Овал</strong> у блок-схемі позначає <em>Початок</em> або <em>Кінець</em> алгоритму.</li>
+          <li><strong>Паралелограм</strong> використовується для <em>Введення</em> даних (<code>input()</code>) та <em>Виведення</em> результатів (<code>print()</code>).</li>
+          <li><strong>Прямокутник</strong> позначає <em>Обчислення</em> (присвоєння значень змінним).</li>
+          <li>У Python операція ділення <code>/</code> завжди повертає дробове число (<code>float</code>), <code>//</code> — цілу частину від ділення, а <code>%</code> — остачу від ділення.</li>
+        </ul>
+      </div>
+
+      <p style="margin-bottom:14px; color:#cbd5e1;">
+        Обери задачу з уроку, введи вхідні дані та запускай алгоритм <strong>покроково</strong>, спостерігаючи за блок-схемою та комірками пам'яті. Щоб зарахувати завдання, протестуй щонайменше <strong>2 різні задачі</strong> до етапу «Виведення».
+      </p>
+
+      <div class="sim1-grid">
+        <div class="sim-controls">
+          <div class="form-group">
+            <label for="sim1TaskSelect">Обери задачу для моделювання:</label>
+            <select id="sim1TaskSelect" onchange="resetSim1()">
+              <option value="temp">Задача 1.1: Градуси °C → °F (f = c * 9 / 5 + 32)</option>
+              <option value="discount">Задача 1.3: Знижка 20% на товар (cina = 500)</option>
+              <option value="time">Задача 1.6: Хвилини → години і хвилини (hv // 60, hv % 60)</option>
+              <option value="stream">Задача 3: Тривалість стріму в секундах (3665 с)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="sim1InputVal" id="sim1InputLabel">Вхідне значення (c — градуси Цельсія):</label>
+            <input type="number" id="sim1InputVal" value="25" />
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+            <button class="btn btn-primary" onclick="stepSim1()">▶ Наступний крок</button>
+            <button class="btn btn-outline" onclick="resetSim1()">↺ Скинути</button>
+          </div>
+
+          <div class="ram-boxes" id="sim1Ram">
+            <div class="ram-cell"><div class="var-name">Пам'ять</div><div class="var-val">Очікування...</div></div>
+          </div>
+        </div>
+
+        <div class="flowchart-stage">
+          <div class="fc-block fc-oval" id="fc-step-0">Початок</div>
+          <div class="fc-arrow">↓</div>
+          <div class="fc-block fc-para" id="fc-step-1"><span id="fc-text-1">1. Введення: c = int(input())</span></div>
+          <div class="fc-arrow">↓</div>
+          <div class="fc-block fc-rect" id="fc-step-2"><span id="fc-text-2">2. Обчислення: f = c * 9 / 5 + 32</span></div>
+          <div class="fc-arrow">↓</div>
+          <div class="fc-block fc-para" id="fc-step-3"><span id="fc-text-3">3. Виведення: print("За Фаренгейтом:", f)</span></div>
+          <div class="fc-arrow">↓</div>
+          <div class="fc-block fc-oval" id="fc-step-4">Кінець</div>
+        </div>
+      </div>
+
+      <div class="feedback" id="fb-t1"></div>
+    </article>
+
+    <!-- ==================== ЗАВДАННЯ 2: СИМУЛЯЦІЯ 2 ==================== -->
+    <article class="task-card" id="sim2">
+      <div class="task-top">
+        <div>
+          <div class="task-tag">Симуляція №2 • Робота зі змінними</div>
+          <h2 class="task-title">2. Обмін значень двох змінних через третю змінну <code>tmp</code></h2>
+        </div>
+        <div class="task-meta">
+          <button class="btn btn-info" onclick="toggleInfo('info2')">💡 Дізнайся більше</button>
+          <span class="badge-pts" id="badge-t2">0 / 2 бали</span>
+        </div>
+      </div>
+
+      <div class="learn-more-box" id="info2">
+        <h4>Чому не можна написати просто <code>a = b; b = a</code>?</h4>
+        <p>Команда присвоєння <code>a = b</code> копіює значення зі змінної <code>b</code> у змінну <code>a</code>, при цьому <strong>старе значення <code>a</code> стирається назавжди</strong>. Якщо після цього виконати <code>b = a</code>, обидві змінні матимуть однакове значення.</p>
+        <p style="margin-top:6px;">Щоб не загубити дані, використовують «запасну» третю змінну <code>tmp</code> (від англ. <em>temporary</em> — тимчасовий):<br>
+        <code>tmp = a</code> → <code>a = b</code> → <code>b = tmp</code>.</p>
+      </div>
+
+      <p style="color:#cbd5e1;">
+        Задай початкові числа для <code>a</code> та <code>b</code> і виконай правильну послідовність команд обміну за допомогою кнопок нижче, щоб у комірці <code>a</code> опинилося значення <code>b</code>, а в <code>b</code> — початкове значення <code>a</code>.
+      </p>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:end; margin-top:14px;">
+        <div>
+          <label style="font-size:0.82rem; color:var(--text-muted); display:block;">Початкове a:</label>
+          <input type="number" id="initA" value="3" style="width:90px; background:var(--bg-input); border:1px solid var(--border); color:#fff; padding:8px; border-radius:8px;">
+        </div>
+        <div>
+          <label style="font-size:0.82rem; color:var(--text-muted); display:block;">Початкове b:</label>
+          <input type="number" id="initB" value="5" style="width:90px; background:var(--bg-input); border:1px solid var(--border); color:#fff; padding:8px; border-radius:8px;">
+        </div>
+        <button class="btn btn-outline" onclick="initSwapSim()">Задати змінні</button>
+      </div>
+
+      <div class="swap-arena">
+        <div class="var-box" id="boxA">
+          <div class="var-box-title">Змінна a</div>
+          <div class="var-box-value" id="valA">3</div>
+        </div>
+        <div class="var-box" id="boxB">
+          <div class="var-box-title">Змінна b</div>
+          <div class="var-box-value" id="valB">5</div>
+        </div>
+        <div class="var-box" id="boxTmp">
+          <div class="var-box-title">Запасна змінна tmp</div>
+          <div class="var-box-value" id="valTmp">—</div>
+        </div>
+      </div>
+
+      <div class="swap-buttons">
+        <button class="btn btn-primary" onclick="execSwapCmd('tmp=a')"><code>tmp = a</code></button>
+        <button class="btn btn-primary" onclick="execSwapCmd('a=b')"><code>a = b</code></button>
+        <button class="btn btn-primary" onclick="execSwapCmd('b=tmp')"><code>b = tmp</code></button>
+        <button class="btn btn-accent" onclick="execSwapCmd('b=a')"><code>b = a</code> (перевірити помилку)</button>
+      </div>
+
+      <div class="code-trace" id="swapTrace"># Натискай кнопки команд вище, щоб виконати їх по черзі...</div>
+      <div class="feedback" id="fb-t2"></div>
+    </article>
+
+    <!-- ==================== ЗАВДАННЯ 3: DRAG & DROP №1 ==================== -->
+    <article class="task-card" id="dnd1">
+      <div class="task-top">
+        <div>
+          <div class="task-tag">Інтерактив Drag &amp; Drop №1 • Складання програми</div>
+          <h2 class="task-title">3. Збери програму «Середній бал» у правильному порядку</h2>
+        </div>
+        <div class="task-meta">
+          <button class="btn btn-info" onclick="toggleInfo('info3')">💡 Дізнайся більше</button>
+          <span class="badge-pts" id="badge-t3">0 / 3 бали</span>
+        </div>
+      </div>
+
+      <div class="learn-more-box" id="info3">
+        <h4>Порядок дій та пріоритет операцій у Python</h4>
+        <p>Будь-яка задача розв'язується у чіткому порядку: <strong>1) Введення</strong> даних → <strong>2) Обчислення</strong> за формулою → <strong>3) Виведення</strong> відповіді.</p>
+        <p style="margin-top:6px;"><strong>Увага на дужки!</strong> У виразі <code>10 + 11 + 12 / 3</code> Python спочатку поділить <code>12 / 3 = 4.0</code>, а потім додасть <code>10 + 11</code> (вийде <code>25.0</code>). Щоб знайти середнє арифметичне, чисельник обов'язково беруть у дужки: <code>(a + b + c) / 3</code>.</p>
+      </div>
+
+      <p style="color:#cbd5e1;">
+        Перетягни рядки коду з лівої колонки у слоти правої колонки (на смартфоні можна торкнутися рядка зліва, а потім — потрібного слота справа). Зайвий рядок із помилкою пріоритету залиш у банку!
+      </p>
+
+      <div class="dnd-layout">
+        <div class="dnd-pool" id="pool1">
+          <div class="dnd-col-title">Банк рядків коду</div>
+          <div class="drag-item" draggable="true" data-id="wrong_avg"><code>serednie = a + b + c / 3</code></div>
+          <div class="drag-item" draggable="true" data-id="print_res"><code>print("Середній бал:", serednie)</code></div>
+          <div class="drag-item" draggable="true" data-id="in_a"><code>a = int(input())</code></div>
+          <div class="drag-item" draggable="true" data-id="calc_avg"><code>serednie = (a + b + c) / 3</code></div>
+          <div class="drag-item" draggable="true" data-id="in_bc"><code>b = int(input()); c = int(input())</code></div>
+        </div>
+
+        <div class="dnd-target" id="target1">
+          <div class="dnd-col-title">Робоча область програми (4 кроки)</div>
+          <div class="drop-slot" data-expected="in_a">Крок 1 (Введення першої оцінки)</div>
+          <div class="drop-slot" data-expected="in_bc">Крок 2 (Введення другої та третьої оцінок)</div>
+          <div class="drop-slot" data-expected="calc_avg">Крок 3 (Правильне обчислення середнього)</div>
+          <div class="drop-slot" data-expected="print_res">Крок 4 (Виведення результату)</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="checkDnd1()">Перевірити порядок коду</button>
+        <button class="btn btn-outline" onclick="resetDnd1()">Очистити слоти</button>
+      </div>
+      <div class="feedback" id="fb-t3"></div>
+    </article>
+
+    <!-- ==================== ЗАВДАННЯ 4: DRAG & DROP №2 (ФОРМУЛИ) ==================== -->
+    <article class="task-card" id="dnd2">
+      <div class="task-top">
+        <div>
+          <div class="task-tag">Інтерактив Drag &amp; Drop №2 • Математичні вирази Python</div>
+          <h2 class="task-title">4. Встанови відповідність між задачею та формулою Python</h2>
+        </div>
+        <div class="task-meta">
+          <button class="btn btn-info" onclick="toggleInfo('info4')">💡 Дізнайся більше</button>
+          <span class="badge-pts" id="badge-t4">0 / 2 бали</span>
+        </div>
+      </div>
+
+      <div class="learn-more-box" id="info4">
+        <h4>Шпаргалка формул до Уроку 10</h4>
+        <ul>
+          <li><strong>x% від суми:</strong> <code>suma * x / 100</code> (наприклад, 25% від 1200 → <code>1200 * 25 / 100 = 300.0</code>).</li>
+          <li><strong>Сантиметри у метри:</strong> <code>sm / 100</code> (175 см → <code>1.75</code> м).</li>
+          <li><strong>Повні години з хвилин:</strong> <code>hv // 60</code> (цілочисельне ділення).</li>
+          <li><strong>Залишок хвилин:</strong> <code>hv % 60</code> (остача від ділення).</li>
+        </ul>
+      </div>
+
+      <p style="color:#cbd5e1;">
+        Перетягни правильний вираз Python до кожного опису обчислення:
+      </p>
+
+      <div class="dnd-layout">
+        <div class="dnd-pool" id="pool2">
+          <div class="dnd-col-title">Вирази мовою Python</div>
+          <div class="drag-item" draggable="true" data-id="f_m"><code>kroky * dovzhyna / 100</code></div>
+          <div class="drag-item" draggable="true" data-id="f_rem"><code>hv % 60</code></div>
+          <div class="drag-item" draggable="true" data-id="f_disc"><code>cina - cina * p / 100</code></div>
+          <div class="drag-item" draggable="true" data-id="f_hrs"><code>hv // 60</code></div>
+        </div>
+
+        <div class="dnd-target" id="target2">
+          <div class="dnd-col-title">Опис задачі</div>
+          <div class="drop-slot" data-expected="f_m">Відстань у метрах (kroky кроків по dovzhyna см)</div>
+          <div class="drop-slot" data-expected="f_disc">Ціна гри після знижки p відсотків</div>
+          <div class="drop-slot" data-expected="f_hrs">Кількість повних годин у hv хвилинах</div>
+          <div class="drop-slot" data-expected="f_rem">Залишок хвилин після виділення повних годин</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="checkDnd2()">Перевірити формули</button>
+        <button class="btn btn-outline" onclick="resetDnd2()">Скинути</button>
+      </div>
+      <div class="feedback" id="fb-t4"></div>
+    </article>
+
+    <!-- ==================== ЗАВДАННЯ 5: ЕЛЕМЕНТИ КОДУ (КАТЕГОРІЯ 3: СТРІМ) ==================== -->
+    <article class="task-card" id="codeTask">
+      <div class="task-top">
+        <div>
+          <div class="task-tag">Практика кодування • Задача «Стрім»</div>
+          <h2 class="task-title">5. Доповни код Python для переведення секунд у години, хвилини та секунди</h2>
+        </div>
+        <div class="task-meta">
+          <button class="btn btn-info" onclick="toggleInfo('info5')">💡 Дізнайся більше</button>
+          <span class="badge-pts" id="badge-t5">0 / 3 бали</span>
+        </div>
+      </div>
+
+      <div class="learn-more-box" id="info5">
+        <h4>Підказка до задачі «Стрім» (Категорія 3)</h4>
+        <p>В одній годині <code>3600</code> секунд (60 × 60). В одній хвилині — <code>60</code> секунд.</p>
+        <ul>
+          <li>Повні години знаходимо цілочисельним діленням: <code>god = sec // 3600</code>.</li>
+          <li>Залишок секунд після виділення годин: <code>zal_sec = sec % 3600</code>.</li>
+          <li>Із цього залишку знаходимо повні хвилини: <code>hv = zal_sec // 60</code>.</li>
+          <li>І останні секунди: <code>s = zal_sec % 60</code>.</li>
+        </ul>
+      </div>
+
+      <p style="color:#cbd5e1; margin-bottom:12px;">
+        Заповни 4 пропуски в коді програми, яка перетворює <code>sec</code> секунд (наприклад, <code>3665</code>) у формат <code>1 год 1 хв 5 с</code>, та протестуй її роботу на власному числі:
+      </p>
+
+      <div class="code-editor-box">
+        <div><span style="color:#64748b"># Читаємо тривалість стріму в секундах</span></div>
+        <div>sec = <input type="text" class="code-blank" id="blank1" placeholder="int(input())" /></div>
+        <div>god = sec // <input type="text" class="code-blank" id="blank2" placeholder="число" style="width:90px;" /></div>
+        <div>zal = sec <input type="text" class="code-blank" id="blank3" placeholder="оператор" style="width:85px;" /> 3600</div>
+        <div>hv = zal // 60</div>
+        <div>s = zal <input type="text" class="code-blank" id="blank4" placeholder="оператор" style="width:85px;" /> 60</div>
+        <div>print(god, "год", hv, "хв", s, "с")</div>
+      </div>
+
+      <div style="margin-top:14px; display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+        <label style="font-size:0.86rem; color:var(--text-muted);">Тестовий вхід (сек):</label>
+        <input type="number" id="testSecInput" value="3665" style="width:110px; background:var(--bg-input); border:1px solid var(--border); color:#fff; padding:8px 10px; border-radius:10px;">
+        <button class="btn btn-primary" onclick="checkCodeTask()">▶ Запустити і перевірити код</button>
+      </div>
+
+      <div class="feedback" id="fb-t5"></div>
+    </article>
+
+    <!-- ==================== ФІНАЛЬНИЙ ЗВІТ ТА ЗАВАНТАЖЕННЯ PDF ==================== -->
+    <section class="report-card" id="pdfReportSection">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px;">
+        <div>
+          <span class="hero-badge" style="margin-bottom:6px;">Фіксація навчальних досягнень</span>
+          <h2 style="font-size:1.45rem; color:#fff;">Підсумковий звіт учня та експорт у PDF</h2>
+          <p style="color:#cbd5e1; font-size:0.92rem;">
+            Усі твої спроби, проміжні кроки та набрані бали автоматично записуються у протокол нижче.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;" class="no-print">
+          <button class="btn btn-success" id="btnDownloadPdf" onclick="downloadPDF()">⬇ Завантажити звіт у PDF</button>
+          <button class="btn btn-outline" onclick="window.print()">🖨 Друк / Зберегти як PDF</button>
+        </div>
+      </div>
+
+      <!-- Аркуш, який конвертується у PDF -->
+      <div class="pdf-preview-sheet" id="pdfDocument">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h2>ЗВІТ ПРО ВИКОНАННЯ ІНТЕРАКТИВНИХ ЗАВДАНЬ</h2>
+            <p style="font-size:0.92rem; color:#475569;">Тема: <strong>Лінійні алгоритми в мові Python</strong> (Інформатика, 10 клас)</p>
+          </div>
+          <div style="text-align:right; font-size:0.86rem; color:#475569;">
+            <div>Дата формування: <strong id="repDate">—</strong></div>
+            <div>Час роботи: <strong id="repDuration">0 хв 0 с</strong></div>
+          </div>
+        </div>
+
+        <div style="margin:14px 0; padding:12px; background:#f1f5f9; border-radius:8px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; font-size:0.95rem;">
+          <div>Учень / учениця: <strong id="repName">Не вказано (введіть прізвище вгорі сторінки)</strong></div>
+          <div>Клас: <strong id="repClass">10-Д</strong></div>
+          <div>Підсумковий бал: <strong id="repTotalScore" style="color:#0284c7; font-size:1.05rem;">0 / 12 балів</strong></div>
+        </div>
+
+        <h3 style="font-size:1rem; margin-top:14px; color:#1e293b;">Результати за завданнями</h3>
+        <table class="pdf-table">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Назва інтерактивного завдання</th>
+              <th>Кількість спроб</th>
+              <th>Статус</th>
+              <th>Бали</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Симуляція №1: Конвеєр лінійного алгоритму</td>
+              <td id="rep-att-1">0</td>
+              <td id="rep-st-1">Не виконано</td>
+              <td id="rep-sc-1">0 / 2</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Симуляція №2: Обмін змінних через <code>tmp</code></td>
+              <td id="rep-att-2">0</td>
+              <td id="rep-st-2">Не виконано</td>
+              <td id="rep-sc-2">0 / 2</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Drag &amp; Drop №1: Порядок рядків «Середній бал»</td>
+              <td id="rep-att-3">0</td>
+              <td id="rep-st-3">Не виконано</td>
+              <td id="rep-sc-3">0 / 3</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Drag &amp; Drop №2: Відповідність формул Python</td>
+              <td id="rep-att-4">0</td>
+              <td id="rep-st-4">Не виконано</td>
+              <td id="rep-sc-4">0 / 2</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Практика кодування: Задача «Стрім» (секунди → год, хв, с)</td>
+              <td id="rep-att-5">0</td>
+              <td id="rep-st-5">Не виконано</td>
+              <td id="rep-sc-5">0 / 3</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="font-size:1rem; margin-top:14px; margin-bottom:6px; color:#1e293b;">Хронологічний журнал спроб та проміжних результатів</h3>
+        <div class="log-box" id="attemptLog">
+          <div>[Початок сесії] Інтерактивний тренажер завантажено. Очікування дій учня...</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ================= ГЛОБАЛЬНИЙ СТАН УЧНЯ =================
+    const startTime = Date.now();
+    const state = {
+      scores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+      maxScores: { 1: 2, 2: 2, 3: 3, 4: 2, 5: 3 },
+      attempts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+      status: { 1: 'Не виконано', 2: 'Не виконано', 3: 'Не виконано', 4: 'Не виконано', 5: 'Не виконано' },
+      logs: []
+    };
+
+    function logEvent(text) {
+      const now = new Date();
+      const timeStr = now.toTimeString().slice(0, 8);
+      state.logs.push(`[${timeStr}] ${text}`);
+      const logBox = document.getElementById('attemptLog');
+      logBox.innerHTML = state.logs.map(item => `<div style="margin-bottom:4px;">${item}</div>`).join('');
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function updateProgressAndScore() {
+      const total = Object.values(state.scores).reduce((a, b) => a + b, 0);
+      const completedCount = Object.keys(state.scores).filter(k => state.scores[k] === state.maxScores[k]).length;
+      const pct = Math.round((total / 12) * 100);
+
+      document.getElementById('totalScorePill').textContent = `Бали: ${total} / 12`;
+      document.getElementById('progressBar').style.width = `${pct}%`;
+      document.getElementById('progressText').textContent = `${pct}% виконано (${completedCount} з 5 завдань)`;
+
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById(`badge-t${i}`).textContent = `${state.scores[i]} / ${state.maxScores[i]} бали`;
+        document.getElementById(`rep-att-${i}`).textContent = state.attempts[i];
+        document.getElementById(`rep-st-${i}`).textContent = state.status[i];
+        document.getElementById(`rep-sc-${i}`).textContent = `${state.scores[i]} / ${state.maxScores[i]}`;
+      }
+      document.getElementById('repTotalScore').textContent = `${total} / 12 балів`;
+    }
+
+    function updateReportPreview() {
+      const name = document.getElementById('studentName').value.trim();
+      const cls = document.getElementById('studentClass').value.trim();
+      document.getElementById('repName').textContent = name || 'Не вказано (введіть прізвище вгорі сторінки)';
+      document.getElementById('repClass').textContent = cls || '10-Д';
+      document.getElementById('repDate').textContent = new Date().toLocaleDateString('uk-UA');
+    }
+
+    setInterval(() => {
+      const diff = Math.floor((Date.now() - startTime) / 1000);
+      const m = Math.floor(diff / 60);
+      const s = diff % 60;
+      document.getElementById('repDuration').textContent = `${m} хв ${s} с`;
+    }, 1000);
+
+    function toggleInfo(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('open');
+    }
+
+    // ================= СИМУЛЯЦІЯ 1: КОНВЕЄР =================
+    let sim1Step = 0;
+    const sim1CompletedTasks = new Set();
+
+    const sim1Configs = {
+      temp: {
+        label: 'Вхідне значення (c — градуси Цельсія):',
+        defaultVal: 25,
+        step1: '1. Введення: c = int(input())',
+        step2: '2. Обчислення: f = c * 9 / 5 + 32',
+        step3: '3. Виведення: print("За Фаренгейтом:", f)',
+        run: (v) => {
+          const f = +(v * 9 / 5 + 32).toFixed(2);
+          return {
+            vars1: [{ n: 'c', v }],
+            vars2: [{ n: 'c', v }, { n: 'f', v: f }],
+            out: `За Фаренгейтом: ${f}`
+          };
+        }
+      },
+      discount: {
+        label: 'Вхідне значення (cina — ціна товару в грн):',
+        defaultVal: 500,
+        step1: '1. Введення: cina = int(input())',
+        step2: '2. Обчислення: znyzhka = cina * 20 / 100; suma = cina - znyzhka',
+        step3: '3. Виведення: print("До сплати:", suma)',
+        run: (v) => {
+          const z = +(v * 20 / 100).toFixed(2);
+          const s = +(v - z).toFixed(2);
+          return {
+            vars1: [{ n: 'cina', v }],
+            vars2: [{ n: 'cina', v }, { n: 'znyzhka', v: z }, { n: 'suma', v: s }],
+            out: `Знижка: ${z} | До сплати: ${s}`
+          };
+        }
+      },
+      time: {
+        label: 'Вхідне значення (hv — кількість хвилин):',
+        defaultVal: 135,
+        step1: '1. Введення: hv = int(input())',
+        step2: '2. Обчислення: god = hv // 60; zal = hv % 60',
+        step3: '3. Виведення: print(god, "год", zal, "хв")',
+        run: (v) => {
+          const g = Math.floor(v / 60);
+          const z = v % 60;
+          return {
+            vars1: [{ n: 'hv', v }],
+            vars2: [{ n: 'hv', v }, { n: 'god', v: g }, { n: 'zal', v: z }],
+            out: `${g} год ${z} хв`
+          };
+        }
+      },
+      stream: {
+        label: 'Вхідне значення (sec — секунди стріму):',
+        defaultVal: 3665,
+        step1: '1. Введення: sec = int(input())',
+        step2: '2. Обчислення: god = sec // 3600; hv = (sec % 3600) // 60; s = sec % 60',
+        step3: '3. Виведення: print(god, "год", hv, "хв", s, "с")',
+        run: (v) => {
+          const g = Math.floor(v / 3600);
+          const hv = Math.floor((v % 3600) / 60);
+          const s = v % 60;
+          return {
+            vars1: [{ n: 'sec', v }],
+            vars2: [{ n: 'god', v: g }, { n: 'hv', v: hv }, { n: 's', v: s }],
+            out: `${g} год ${hv} хв ${s} с`
+          };
+        }
+      }
+    };
+
+    function resetSim1() {
+      sim1Step = 0;
+      const mode = document.getElementById('sim1TaskSelect').value;
+      const cfg = sim1Configs[mode];
+      document.getElementById('sim1InputLabel').textContent = cfg.label;
+      document.getElementById('sim1InputVal').value = cfg.defaultVal;
+      document.getElementById('fc-text-1').textContent = cfg.step1;
+      document.getElementById('fc-text-2').textContent = cfg.step2;
+      document.getElementById('fc-text-3').textContent = cfg.step3;
+
+      for (let i = 0; i <= 4; i++) {
+        document.getElementById(`fc-step-${i}`).classList.remove('active');
+      }
+      document.getElementById('fc-step-0').classList.add('active');
+      document.getElementById('sim1Ram').innerHTML = `<div class="ram-cell"><div class="var-name">Статус</div><div class="var-val">Натисни «Наступний крок»</div></div>`;
+    }
+
+    function stepSim1() {
+      const mode = document.getElementById('sim1TaskSelect').value;
+      const cfg = sim1Configs[mode];
+      const val = Number(document.getElementById('sim1InputVal').value) || 0;
+      const res = cfg.run(val);
+
+      sim1Step++;
+      if (sim1Step > 4) sim1Step = 1;
+
+      for (let i = 0; i <= 4; i++) {
+        document.getElementById(`fc-step-${i}`).classList.toggle('active', i === sim1Step);
+      }
+
+      const ram = document.getElementById('sim1Ram');
+      if (sim1Step === 1) {
+        ram.innerHTML = res.vars1.map(x => `<div class="ram-cell"><div class="var-name">${x.n}</div><div class="var-val">${x.v}</div></div>`).join('');
+      } else if (sim1Step === 2) {
+        ram.innerHTML = res.vars2.map(x => `<div class="ram-cell"><div class="var-name">${x.n}</div><div class="var-val">${x.v}</div></div>`).join('');
+      } else if (sim1Step === 3) {
+        ram.innerHTML = `<div class="ram-cell" style="border-color:#10b981;"><div class="var-name" style="color:#34d399;">Вивід у Shell</div><div class="var-val">${res.out}</div></div>`;
+        state.attempts[1]++;
+        sim1CompletedTasks.add(mode);
+        logEvent(`Симуляція №1 (${mode}, вхід=${val}): отримано вивід "${res.out}".`);
+
+        const fb = document.getElementById('fb-t1');
+        if (sim1CompletedTasks.size >= 2) {
+          state.scores[1] = 2;
+          state.status[1] = 'Виконано (2/2 моделі)';
+          document.getElementById('sim1').classList.add('completed');
+          fb.className = 'feedback ok';
+          fb.textContent = `Чудово! Ти змоделював(ла) ${sim1CompletedTasks.size} задачі. Завдання зараховано (+2 бали).`;
+        } else {
+          state.scores[1] = 1;
+          state.status[1] = 'Частково (1/2 моделі)';
+          fb.className = 'feedback ok';
+          fb.textContent = `Першу модель виконано (${res.out})! Обери ще одну іншу задачу зі списку вище та пройди її до виведення, щоб отримати максимум балів.`;
+        }
+        updateProgressAndScore();
+      } else if (sim1Step === 4) {
+        ram.innerHTML = `<div class="ram-cell"><div class="var-name">Програма</div><div class="var-val">Завершена ✓</div></div>`;
+      }
+    }
+
+    // ================= СИМУЛЯЦІЯ 2: ОБМІН ЧЕРЕЗ TMP =================
+    let swapState = { initA: 3, initB: 5, a: 3, b: 5, tmp: null, history: [] };
+
+    function initSwapSim() {
+      const a = parseInt(document.getElementById('initA').value, 10) || 0;
+      const b = parseInt(document.getElementById('initB').value, 10) || 0;
+      swapState = { initA: a, initB: b, a, b, tmp: null, history: [] };
+      renderSwapBoxes();
+      document.getElementById('swapTrace').textContent = `# Початковий стан: a = ${a}, b = ${b}, tmp = не визначено`;
+      document.getElementById('fb-t2').className = 'feedback';
+    }
+
+    function renderSwapBoxes(activeBox = '') {
+      document.getElementById('valA').textContent = swapState.a;
+      document.getElementById('valB').textContent = swapState.b;
+      document.getElementById('valTmp').textContent = swapState.tmp === null ? '—' : swapState.tmp;
+      ['boxA', 'boxB', 'boxTmp'].forEach(id => document.getElementById(id).classList.remove('highlight'));
+      if (activeBox) document.getElementById(activeBox).classList.add('highlight');
+    }
+
+    function execSwapCmd(cmd) {
+      state.attempts[2]++;
+      const fb = document.getElementById('fb-t2');
+
+      if (cmd === 'tmp=a') {
+        swapState.tmp = swapState.a;
+        swapState.history.push(`tmp = a  # tmp отримало ${swapState.tmp}`);
+        renderSwapBoxes('boxTmp');
+      } else if (cmd === 'a=b') {
+        swapState.a = swapState.b;
+        swapState.history.push(`a = b    # a тепер дорівнює ${swapState.a}`);
+        renderSwapBoxes('boxA');
+      } else if (cmd === 'b=tmp') {
+        if (swapState.tmp === null) {
+          fb.className = 'feedback err';
+          fb.textContent = 'Помилка NameError: змінна tmp ще порожня! Спочатку збережи значення a у tmp.';
+          logEvent('Симуляція №2: спроба виконати b = tmp до ініціалізації tmp.');
+          updateProgressAndScore();
+          return;
+        }
+        swapState.b = swapState.tmp;
+        swapState.history.push(`b = tmp  # b отримало збережене значення ${swapState.b}`);
+        renderSwapBoxes('boxB');
+      } else if (cmd === 'b=a') {
+        swapState.b = swapState.a;
+        swapState.history.push(`b = a    # Увага! Обидві змінні тепер рівні ${swapState.b}`);
+        renderSwapBoxes('boxB');
+      }
+
+      document.getElementById('swapTrace').innerHTML = swapState.history.join('<br>');
+
+      if (swapState.initA !== swapState.initB && swapState.a === swapState.initB && swapState.b === swapState.initA) {
+        state.scores[2] = 2;
+        state.status[2] = 'Виконано';
+        document.getElementById('sim2').classList.add('completed');
+        fb.className = 'feedback ok';
+        fb.textContent = `Успіх! Значення обмінялися місцями: a = ${swapState.a}, b = ${swapState.b}. (+2 бали)`;
+        logEvent(`Симуляція №2: успішний обмін (${swapState.initA}, ${swapState.initB}) → (${swapState.a}, ${swapState.b}).`);
+      } else if (swapState.a === swapState.b && swapState.initA !== swapState.initB) {
+        fb.className = 'feedback err';
+        fb.textContent = `Ой! Обидві змінні стали однаковими (${swapState.a}). Старе значення затерлося. Натисни «Задати змінні» і спробуй через tmp.`;
+        logEvent(`Симуляція №2: затирання значення (a=${swapState.a}, b=${swapState.b}).`);
+      }
+      updateProgressAndScore();
+    }
+
+    // ================= УНІВЕРСАЛЬНИЙ DRAG & DROP + TAP ДЛЯ СМАРТФОНІВ =================
+    let draggedEl = null;
+    let selectedTouchEl = null;
+
+    function setupDragAndDrop(poolId, targetId) {
+      const pool = document.getElementById(poolId);
+      const target = document.getElementById(targetId);
+
+      pool.querySelectorAll('.drag-item').forEach(item => {
+        item.addEventListener('dragstart', () => {
+          draggedEl = item;
+        });
+
+        // Підтримка кліку/тапу для мобільних пристроїв
+        item.addEventListener('click', () => {
+          if (selectedTouchEl === item) {
+            item.classList.remove('selected-touch');
+            selectedTouchEl = null;
+          } else {
+            document.querySelectorAll('.drag-item').forEach(el => el.classList.remove('selected-touch'));
+            selectedTouchEl = item;
+            item.classList.add('selected-touch');
+          }
+        });
+      });
+
+      target.querySelectorAll('.drop-slot').forEach(slot => {
+        if (!slot.dataset.placeholder) {
+          slot.dataset.placeholder = slot.textContent;
+        }
+
+        slot.addEventListener('dragover', e => {
+          e.preventDefault();
+          slot.classList.add('drag-over');
+        });
+
+        slot.addEventListener('dragleave', () => {
+          slot.classList.remove('drag-over');
+        });
+
+        slot.addEventListener('drop', e => {
+          e.preventDefault();
+          slot.classList.remove('drag-over');
+          if (draggedEl) placeItemIntoSlot(draggedEl, slot, pool);
+        });
+
+        // Клік по слоту на смартфоні або для повернення елемента назад
+        slot.addEventListener('click', () => {
+          if (selectedTouchEl) {
+            placeItemIntoSlot(selectedTouchEl, slot, pool);
+            selectedTouchEl.classList.remove('selected-touch');
+            selectedTouchEl = null;
+          } else if (slot.dataset.placedId) {
+            returnSlotToPool(slot, pool);
+          }
+        });
+      });
+    }
+
+    function placeItemIntoSlot(item, slot, pool) {
+      if (slot.dataset.placedId) {
+        returnSlotToPool(slot, pool);
+      }
+      slot.dataset.placedId = item.dataset.id;
+      slot.innerHTML = `<span>${item.innerHTML}</span> <small style="color:#94a3b8;">✕</small>`;
+      slot.classList.add('filled');
+      item.style.display = 'none';
+    }
+
+    function returnSlotToPool(slot, pool) {
+      const id = slot.dataset.placedId;
+      if (!id) return;
+      const item = pool.querySelector(`.drag-item[data-id="${id}"]`);
+      if (item) item.style.display = 'flex';
+      delete slot.dataset.placedId;
+      slot.textContent = slot.dataset.placeholder;
+      slot.classList.remove('filled');
+    }
+
+    function resetDndContainer(poolId, targetId) {
+      const pool = document.getElementById(poolId);
+      const target = document.getElementById(targetId);
+      target.querySelectorAll('.drop-slot').forEach(slot => returnSlotToPool(slot, pool));
+    }
+
+    // Завдання 3 перевірка
+    function checkDnd1() {
+      state.attempts[3]++;
+      const slots = document.querySelectorAll('#target1 .drop-slot');
+      let correct = 0;
+      slots.forEach(s => {
+        if (s.dataset.placedId === s.dataset.expected) correct++;
+      });
+
+      const fb = document.getElementById('fb-t3');
+      if (correct === 4) {
+        state.scores[3] = 3;
+        state.status[3] = 'Виконано';
+        document.getElementById('dnd1').classList.add('completed');
+        fb.className = 'feedback ok';
+        fb.textContent = 'Бездоганно! Усі 4 кроки програми «Середній бал» зібрано правильно (+3 бали).';
+        logEvent('Drag & Drop №1: правильний порядок програми (4/4).');
+      } else {
+        state.scores[3] = Math.max(state.scores[3], correct >= 2 ? 1 : 0);
+        state.status[3] = `Спроба (${correct}/4 правильно)`;
+        fb.className = 'feedback err';
+        fb.textContent = `Правильно розміщено ${correct} із 4 рядків. Перевір порядок: спочатку введення, потім обчислення з дужками (a + b + c) / 3, потім print().`;
+        logEvent(`Drag & Drop №1: частковий збіг (${correct}/4).`);
+      }
+      updateProgressAndScore();
+    }
+
+    function resetDnd1() {
+      resetDndContainer('pool1', 'target1');
+      document.getElementById('fb-t3').className = 'feedback';
+    }
+
+    // Завдання 4 перевірка
+    function checkDnd2() {
+      state.attempts[4]++;
+      const slots = document.querySelectorAll('#target2 .drop-slot');
+      let correct = 0;
+      slots.forEach(s => {
+        if (s.dataset.placedId === s.dataset.expected) correct++;
+      });
+
+      const fb = document.getElementById('fb-t4');
+      if (correct === 4) {
+        state.scores[4] = 2;
+        state.status[4] = 'Виконано';
+        document.getElementById('dnd2').classList.add('completed');
+        fb.className = 'feedback ok';
+        fb.textContent = 'Супер! Усі 4 формули Python визначено безпомилково (+2 бали).';
+        logEvent('Drag & Drop №2: усі 4 формули зіставлено правильно.');
+      } else {
+        state.scores[4] = Math.max(state.scores[4], correct >= 2 ? 1 : 0);
+        state.status[4] = `Спроба (${correct}/4 правильно)`;
+        fb.className = 'feedback err';
+        fb.textContent = `Правильно зіставлено ${correct} із 4 формул. Пригадай: // — цілі години, % — залишок хвилин.`;
+        logEvent(`Drag & Drop №2: частковий збіг (${correct}/4).`);
+      }
+      updateProgressAndScore();
+    }
+
+    function resetDnd2() {
+      resetDndContainer('pool2', 'target2');
+      document.getElementById('fb-t4').className = 'feedback';
+    }
+
+    // ================= ЗАВДАННЯ 5: ПЕРЕВІРКА КОДУ =================
+    function checkCodeTask() {
+      state.attempts[5]++;
+      const b1 = document.getElementById('blank1').value.replace(/\s+/g, '');
+      const b2 = document.getElementById('blank2').value.replace(/\s+/g, '');
+      const b3 = document.getElementById('blank3').value.replace(/\s+/g, '');
+      const b4 = document.getElementById('blank4').value.replace(/\s+/g, '');
+      const testSec = parseInt(document.getElementById('testSecInput').value, 10) || 0;
+
+      const ok1 = (b1 === 'int(input())');
+      const ok2 = (b2 === '3600');
+      const ok3 = (b3 === '%');
+      const ok4 = (b4 === '%');
+      const count = [ok1, ok2, ok3, ok4].filter(Boolean).length;
+
+      const fb = document.getElementById('fb-t5');
+      if (count === 4) {
+        const g = Math.floor(testSec / 3600);
+        const hv = Math.floor((testSec % 3600) / 60);
+        const s = testSec % 60;
+
+        state.scores[5] = 3;
+        state.status[5] = 'Виконано';
+        document.getElementById('codeTask').classList.add('completed');
+        fb.className = 'feedback ok';
+        fb.innerHTML = `Код працює бездоганно! Результат виконання для <code>${testSec}</code> с: <strong>${g} год ${hv} хв ${s} с</strong>. (+3 бали)`;
+        logEvent(`Завдання №5 (Код «Стрім»): успішно виконано! Тест ${testSec} с → ${g} год ${hv} хв ${s} с.`);
+      } else {
+        state.scores[5] = Math.max(state.scores[5], count >= 2 ? 1 : 0);
+        state.status[5] = `Спроба (${count}/4 пропусків)`;
+        fb.className = 'feedback err';
+        fb.textContent = `Правильно заповнено ${count} із 4 пропусків. Перевір: для зчитування цілого числа пишемо int(input()), в 1 годині 3600 секунд, а для остачі використовується оператор %.`;
+        logEvent(`Завдання №5 (Код «Стрім»): заповнено ${count}/4 пропусків.`);
+      }
+      updateProgressAndScore();
+    }
+
+    // ================= НАДІЙНИЙ ЕКСПОРТ ЗВІТУ У PDF (ПК + СМАРТФОНИ) =================
+    function loadScriptFallback(url) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = url;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    async function downloadPDF() {
+      const btn = document.getElementById('btnDownloadPdf');
+      const origText = btn ? btn.innerHTML : '⬇ Завантажити звіт у PDF';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Формування PDF...';
+      }
+
+      try {
+        updateReportPreview();
+
+        // Якщо основний CDN не завантажився — підвантажуємо резервний
+        if (typeof html2canvas === 'undefined') {
+          await loadScriptFallback('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+        }
+        if (typeof window.jspdf === 'undefined') {
+          await loadScriptFallback('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+        }
+
+        const sourceEl = document.getElementById('pdfDocument');
+        const rawName = document.getElementById('studentName').value.trim() || 'Uchen_10_klas';
+        const safeName = rawName.replace(/[^a-zA-Zа-яА-ЯіІїЇєЄ0-9_-]/g, '_');
+        const fileName = `Zvit_Python_Linijni_${safeName}.pdf`;
+
+        // Створюємо чисту копію документа фіксованої ширини A4 для бездоганного рендеру на смартфонах і ПК
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'fixed';
+        wrapper.style.left = '-9999px';
+        wrapper.style.top = '0';
+        wrapper.style.width = '794px';
+        wrapper.style.background = '#ffffff';
+        wrapper.style.zIndex = '-1';
+
+        const clone = sourceEl.cloneNode(true);
+        clone.style.boxShadow = 'none';
+        clone.style.margin = '0';
+        clone.style.borderRadius = '0';
+        clone.style.width = '794px';
+        clone.style.padding = '32px';
+
+        // Розгортаємо журнал спроб повністю у PDF, щоб не обрізався скролом
+        const clonedLog = clone.querySelector('.log-box');
+        if (clonedLog) {
+          clonedLog.style.maxHeight = 'none';
+          clonedLog.style.overflow = 'visible';
+        }
+
+        wrapper.appendChild(clone);
+        document.body.appendChild(wrapper);
+
+        const canvas = await html2canvas(clone, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false
+        });
+
+        document.body.removeChild(wrapper);
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 10;
+        const usableWidth = pageWidth - margin * 2;
+        const imgHeight = (canvas.height * usableWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = margin;
+
+        pdf.addImage(imgData, 'JPEG', margin, position, usableWidth, imgHeight);
+        heightLeft -= (pageHeight - margin * 2);
+
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight + margin;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', margin, position, usableWidth, imgHeight);
+          heightLeft -= (pageHeight - margin * 2);
+        }
+
+        // Надійне збереження файлу (працює на ПК, Android та iOS Safari)
+        const blob = pdf.output('blob');
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+
+        logEvent(`Сформовано та завантажено PDF-звіт (${fileName}).`);
+      } catch (err) {
+        console.error('Помилка генерації PDF:', err);
+        alert('Не вдалося згенерувати PDF напряму в цьому браузері — відкриваємо вікно друку, де можна обрати «Зберегти як PDF».');
+        window.print();
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = origText;
+        }
+      }
+    }
+
+    // Ініціалізація при завантаженні
+    window.addEventListener('DOMContentLoaded', () => {
+      resetSim1();
+      setupDragAndDrop('pool1', 'target1');
+      setupDragAndDrop('pool2', 'target2');
+      updateReportPreview();
+      updateProgressAndScore();
+    });
+  </script>
+</body>
+</html>
